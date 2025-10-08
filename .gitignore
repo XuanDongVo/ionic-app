@@ -1,0 +1,90 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Frontend
+# dependencies
+frontend/node_modules
+frontend/.pnp
+frontend/.pnp.js
+
+# testing
+frontend/coverage
+
+# production
+frontend/dist
+frontend/build
+frontend/www
+
+# misc
+frontend/.DS_Store
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/.nx
+frontend/.nx/cache
+frontend/.eslintcache
+
+# logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# IDE - frontend
+frontend/.vscode/*
+!frontend/.vscode/extensions.json
+!frontend/.vscode/settings.json
+!frontend/.vscode/tasks.json
+!frontend/.vscode/launch.json
+frontend/.idea
+
+# Backend
+# compiled output
+backend/target/
+backend/build/
+backend/dist/
+!backend/**/src/main/**/target/
+!backend/**/src/test/**/target/
+!backend/**/src/main/**/build/
+!backend/**/src/test/**/build/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE - backend
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings
+backend/.springBeans
+backend/.sts4-cache
+backend/.idea
+backend/*.iws
+backend/*.iml
+backend/*.ipr
+backend/.vscode/
+backend/nbproject/private/
+backend/nbbuild/
+backend/nbdist/
+backend/.nb-gradle/
+backend/src/main/resources/application.properties
+
+# Documentation
+HELP.md
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Global IDE settings
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# Global misc
+*.log
+.eslintcache
+dist/
