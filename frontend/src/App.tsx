@@ -36,6 +36,7 @@ import { homeOutline, documents, searchOutline, settingsOutline, addCircle } fro
 import { Route, Redirect } from 'react-router-dom';
 
 import Home from './pages/Home';
+import Search from './pages/Search';
 
 setupIonicReact();
 
@@ -45,9 +46,9 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/home" component={Home} exact />
-          {/* <Route path="/finished" component={Finished} exact />
+          {/* <Route path="/finished" component={Finished} exact /> */}
           <Route path="/search" component={Search} exact />
-          <Route path="/settings" component={Settings} exact /> */}
+          {/* <Route path="/settings" component={Settings} exact /> */}
           <Redirect exact from="/" to="/home" />
         </IonRouterOutlet>
 
