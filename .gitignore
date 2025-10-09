@@ -69,6 +69,7 @@ backend/nbbuild/
 backend/nbdist/
 backend/.nb-gradle/
 backend/src/main/resources/application.properties
+backend/
 
 # Documentation
 HELP.md

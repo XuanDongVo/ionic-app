@@ -1,0 +1,76 @@
+.verify-container {
+  padding: 32px 20px;
+  max-width: 400px;
+  margin: 0 auto;
+  font-family: "Inter", sans-serif;
+}
+
+.back-link {
+  background: none;
+  border: none;
+  color: #7b61ff;
+  font-size: 14px;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.verify-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1e1e1e;
+}
+
+.verify-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 32px;
+}
+
+.verify-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.verify-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.verify-input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+.verify-button {
+  background-color: #7b61ff;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 14px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.verify-button:hover {
+  background-color: #6a4ee6;
+}
+
+.verify-resend {
+  text-align: center;
+  margin-top: 20px;
+  color: #555;
+  font-size: 14px;
+}
+
+.resend-link {
+  color: #7b61ff;
+  font-weight: 600;
+  cursor: pointer;
+}
