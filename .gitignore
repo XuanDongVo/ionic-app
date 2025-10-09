@@ -12,6 +12,7 @@ frontend/coverage
 frontend/dist
 frontend/build
 frontend/www
+frontend/android
 
 # misc
 frontend/.DS_Store

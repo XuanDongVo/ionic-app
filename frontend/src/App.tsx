@@ -32,10 +32,11 @@ import './theme/variables.css';
 
 import { IonApp, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { homeOutline, checkmarkDoneOutline, searchOutline, settingsOutline, addCircle } from 'ionicons/icons';
+import { homeOutline, documents, searchOutline, settingsOutline, addCircle } from 'ionicons/icons';
 import { Route, Redirect } from 'react-router-dom';
 
 import Home from './pages/Home';
+import Search from './pages/Search';
 
 setupIonicReact();
 
@@ -45,9 +46,9 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/home" component={Home} exact />
-          {/* <Route path="/finished" component={Finished} exact />
+          {/* <Route path="/finished" component={Finished} exact /> */}
           <Route path="/search" component={Search} exact />
-          <Route path="/settings" component={Settings} exact /> */}
+          {/* <Route path="/settings" component={Settings} exact /> */}
           <Redirect exact from="/" to="/home" />
         </IonRouterOutlet>
 
@@ -58,11 +59,10 @@ const App: React.FC = () => (
           </IonTabButton>
 
           <IonTabButton tab="finished" href="/finished">
-            <IonIcon icon={checkmarkDoneOutline} />
+            <IonIcon icon={documents} />
             <IonLabel>Finished</IonLabel>
           </IonTabButton>
 
-          {/* Nút tròn ở giữa */}
           <IonTabButton tab="add" onClick={() => alert('Add new note')}>
             <IonIcon icon={addCircle} style={{ fontSize: '48px', marginTop: '-16px' }} />
           </IonTabButton>

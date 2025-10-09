@@ -11,3 +11,14 @@ export interface ApiError {
   statusCode?: number;
   timestamp?: string;
 }
+
+export interface Note {
+  id: number;
+  title: string;
+  content: string;
+  color: string;
+}
+
+export interface NoteCardProps {
+  note: Note;
+}
