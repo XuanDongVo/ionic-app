@@ -5,6 +5,8 @@ import com.example.dto.request.UpdateNoteRequest;
 import com.example.dto.response.ApiResponse;
 import com.example.dto.response.NoteResponse;
 import com.example.service.NoteService;
+import com.example.util.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,11 +22,22 @@ import java.util.List;
 public class NoteController {
 
     private final NoteService noteService;
+    private final JwtUtil jwtUtil;
+
+    // Helper method để lấy userId từ JWT token
+    private Long getUserIdFromToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            return jwtUtil.extractUserId(token);
+        }
+        return null;
+    }
 
     // Lấy tất cả notes của user
     @GetMapping
-    public ResponseEntity<ApiResponse<List<NoteResponse>>> getAllNotes(
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+    public ResponseEntity<ApiResponse<List<NoteResponse>>> getAllNotes(HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         List<NoteResponse> notes = noteService.getAllNotesByUser(userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách notes thành công", notes));
     }
@@ -33,7 +46,8 @@ public class NoteController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<NoteResponse>> getNoteById(
             @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         NoteResponse note = noteService.getNoteById(id, userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy thông tin note thành công", note));
     }
@@ -42,7 +56,8 @@ public class NoteController {
     @PostMapping
     public ResponseEntity<ApiResponse<NoteResponse>> createNote(
             @Valid @RequestBody NoteRequest request,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest httpRequest) {
+        Long userId = getUserIdFromToken(httpRequest);
         NoteResponse note = noteService.createNote(request, userId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -54,7 +69,8 @@ public class NoteController {
     public ResponseEntity<ApiResponse<NoteResponse>> updateNote(
             @PathVariable Long id,
             @Valid @RequestBody UpdateNoteRequest request,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest httpRequest) {
+        Long userId = getUserIdFromToken(httpRequest);
         NoteResponse note = noteService.updateNote(id, request, userId);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật note thành công", note));
     }
@@ -63,23 +79,24 @@ public class NoteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteNote(
             @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         noteService.deleteNote(id, userId);
         return ResponseEntity.ok(ApiResponse.success("Xóa note thành công", null));
     }
 
     // Lấy notes đã pin
     @GetMapping("/pinned")
-    public ResponseEntity<ApiResponse<List<NoteResponse>>> getPinnedNotes(
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+    public ResponseEntity<ApiResponse<List<NoteResponse>>> getPinnedNotes(HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         List<NoteResponse> notes = noteService.getPinnedNotes(userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách notes đã pin thành công", notes));
     }
 
     // Lấy notes đã lưu trữ
     @GetMapping("/archived")
-    public ResponseEntity<ApiResponse<List<NoteResponse>>> getArchivedNotes(
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+    public ResponseEntity<ApiResponse<List<NoteResponse>>> getArchivedNotes(HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         List<NoteResponse> notes = noteService.getArchivedNotes(userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách notes đã lưu trữ thành công", notes));
     }
@@ -88,7 +105,8 @@ public class NoteController {
     @GetMapping("/notebook/{notebookId}")
     public ResponseEntity<ApiResponse<List<NoteResponse>>> getNotesByNotebook(
             @PathVariable Long notebookId,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         List<NoteResponse> notes = noteService.getNotesByNotebook(notebookId, userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách notes theo notebook thành công", notes));
     }
@@ -97,7 +115,8 @@ public class NoteController {
     @GetMapping("/tag/{tagId}")
     public ResponseEntity<ApiResponse<List<NoteResponse>>> getNotesByTag(
             @PathVariable Long tagId,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         List<NoteResponse> notes = noteService.getNotesByTag(tagId, userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách notes theo tag thành công", notes));
     }
@@ -106,7 +125,8 @@ public class NoteController {
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<NoteResponse>>> searchNotes(
             @RequestParam String keyword,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         List<NoteResponse> notes = noteService.searchNotes(keyword, userId);
         return ResponseEntity.ok(ApiResponse.success("Tìm kiếm notes thành công", notes));
     }
@@ -115,7 +135,8 @@ public class NoteController {
     @GetMapping("/{id}/sub-notes")
     public ResponseEntity<ApiResponse<List<NoteResponse>>> getSubNotes(
             @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         List<NoteResponse> subNotes = noteService.getSubNotes(id, userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách sub-notes thành công", subNotes));
     }
@@ -124,7 +145,8 @@ public class NoteController {
     @PatchMapping("/{id}/toggle-pin")
     public ResponseEntity<ApiResponse<NoteResponse>> togglePin(
             @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         NoteResponse note = noteService.togglePin(id, userId);
         return ResponseEntity.ok(ApiResponse.success("Toggle pin thành công", note));
     }
@@ -133,7 +155,8 @@ public class NoteController {
     @PatchMapping("/{id}/toggle-archive")
     public ResponseEntity<ApiResponse<NoteResponse>> toggleArchive(
             @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "1") Long userId) {
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
         NoteResponse note = noteService.toggleArchive(id, userId);
         return ResponseEntity.ok(ApiResponse.success("Toggle archive thành công", note));
     }
