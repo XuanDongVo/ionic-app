@@ -37,6 +37,9 @@ import { Route, Redirect } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Search from './pages/Search';
+import ProfileEdit from './pages/ProfileEdit';
+import ChangePassword from './pages/ChangePassword';
+import Settings from './pages/Settings';
 
 setupIonicReact();
 
@@ -48,7 +51,9 @@ const App: React.FC = () => (
           <Route path="/home" component={Home} exact />
           {/* <Route path="/finished" component={Finished} exact /> */}
           <Route path="/search" component={Search} exact />
-          {/* <Route path="/settings" component={Settings} exact /> */}
+          <Route path="/profile/edit" component={ProfileEdit} exact />
+          <Route path="/profile/change-password" component={ChangePassword} exact />
+          <Route path="/settings" component={Settings} exact />
           <Redirect exact from="/" to="/home" />
         </IonRouterOutlet>
 
