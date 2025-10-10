@@ -1,0 +1,64 @@
+/* Search page specific styles */
+.search-empty-state,
+.search-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  padding: 2rem;
+  text-align: center;
+}
+
+.search-illustration,
+.no-results-illustration {
+  max-width: 60%;
+  margin-bottom: 2rem;
+}
+
+.search-illustration img,
+.no-results-illustration img {
+  width: 100%;
+}
+
+.search-no-results h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.search-no-results p {
+  color: #666;
+}
+
+/* For note cards grid (same as in Home.css) */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 2px;
+  width: 100%;
+}
+
+.add-button {
+  position: relative;
+  overflow: visible !important;
+}
+
+.add-circle {
+  background-color: #6c4aa0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.add-circle ion-icon {
+  font-size: 24px;
+  color: white;
+}
