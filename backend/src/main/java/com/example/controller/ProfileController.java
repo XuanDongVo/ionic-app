@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.model.User;
+import com.example.entity.User;
 import com.example.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +39,9 @@ public class ProfileController {
         User user = userOpt.get();
         Map<String, Object> dto = new HashMap<>();
         dto.put("id", user.getId());
-        dto.put("fullName", user.getFullName());
+        dto.put("fullName", user.getUsername());
         dto.put("email", user.getEmail());
-        dto.put("imagePath", user.getImagePath());
+        dto.put("imagePath", null);
         return ResponseEntity.ok(dto);
     }
 
@@ -55,7 +55,7 @@ public class ProfileController {
         User user = userOpt.get();
         String fullName = payload.get("fullName");
         String newEmail = payload.get("email");
-        if (fullName != null) user.setFullName(fullName);
+        if (fullName != null) user.setUsername(fullName);
         if (newEmail != null) user.setEmail(newEmail);
         userRepository.save(user);
         return ResponseEntity.ok().build();
