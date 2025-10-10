@@ -79,11 +79,11 @@ public class ProfileController {
         Files.copy(file.getInputStream(), target);
 
         User user = userOpt.get();
-        user.setImagePath("/uploads/profile/" + filename);
+//        user.setImagePath("/uploads/profile/" + filename);
         userRepository.save(user);
 
         Map<String, Object> res = new HashMap<>();
-        res.put("imagePath", user.getImagePath());
+//        res.put("imagePath", user.getImagePath());
         return ResponseEntity.ok(res);
     }
 }

@@ -53,21 +53,21 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Authenticate user
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("Email không tồn tại"));
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        user.getEmail(),
                         request.getPassword()
                 )
         );
 
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new BadRequestException("User không tồn tại"));
-
-        String token = jwtUtil.generateToken(user.getUsername(), user.getId());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getId());
 
         return new AuthResponse(token, user.getId(), user.getUsername(), user.getEmail());
     }
+
 
     public UserResponse getCurrentUser(String username) {
         User user = userRepository.findByUsername(username)

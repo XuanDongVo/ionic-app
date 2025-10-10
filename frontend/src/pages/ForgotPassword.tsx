@@ -1,20 +1,47 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { useHistory } from "react-router-dom";
 import "./ForgotPassword.css";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const history = useHistory();
 
-  const handleSendCode = (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage("");
+    setError("");
+
     if (!email) {
-      alert("Please enter your email address");
+      setError("⚠️ Please enter your email address.");
       return;
     }
-    console.log("Sending code to:", email);
-    // Sau khi gửi mã thành công có thể chuyển sang verify email
-    // history.push("/verify-email");
+
+    try {
+      setLoading(true);
+      // GỌI API GỬI MÃ XÁC NHẬN
+      const response = await axios.post("http://localhost:8080/api/auth/forgot-password", {
+        email: email,
+      });
+
+      if (response.data.success) {
+        localStorage.setItem("resetEmail", email);
+        setMessage("✅ Verification code has been sent to your email.");
+        // Chờ 1–2s rồi chuyển sang trang nhập mã
+        setTimeout(() => {
+          history.push("/verify-email");
+        }, 1500);
+      } else {
+        setError(response.data.message || "❌ Failed to send reset code.");
+      }
+    } catch (err: any) {
+      setError("❌ Error sending email. Please check your address or try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,8 +68,11 @@ const ForgotPassword: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <button type="submit" className="forgot-button">
-          Send Code
+        {error && <p className="error-text">{error}</p>}
+        {message && <p className="success-text">{message}</p>}
+
+        <button type="submit" className="forgot-button" disabled={loading}>
+          {loading ? "Sending..." : "Send Code"}
         </button>
       </form>
     </div>
