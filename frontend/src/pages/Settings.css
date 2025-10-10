@@ -1,0 +1,61 @@
+.settings-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--ion-color-step-150, #e9e9ee);
+  background: var(--ion-background-color, #fff);
+}
+
+.settings-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ion-text-color, #1f1f1f);
+}
+
+.settings-email {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ion-color-medium, #666);
+  font-size: 12px;
+}
+
+.settings-edit-block {
+  margin-top: 16px;
+}
+
+.edit-outline-btn {
+  --border-color: var(--ion-color-primary);
+  --color: var(--ion-color-primary);
+  --border-radius: 14px;
+  height: 44px;
+  font-weight: 600;
+}
+
+.section-label {
+  padding: 12px 20px 6px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ion-color-medium);
+}
+
+ion-list.settings-list {
+  margin-top: 0;
+}
+
+.logout-list ion-item {
+  --color: var(--ion-color-danger);
+}
+
+.settings-footer-version {
+  text-align: center;
+  padding: 12px;
+  color: #b0b0b8;
+  font-size: 12px;
+}
+
+

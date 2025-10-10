@@ -22,3 +22,16 @@ export interface Note {
 export interface NoteCardProps {
   note: Note;
 }
+
+// User profile models
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  imagePath?: string;
+}
+
+export interface UpdateProfilePayload {
+  fullName?: string;
+  email?: string;
+}

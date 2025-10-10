@@ -92,3 +92,28 @@ export class ApiService {
 }
 
 export default api;
+
+// Profile-specific helpers
+export async function fetchProfile(email: string) {
+  return ApiService.get<{ id: string; fullName: string; email: string; imagePath?: string }>(
+    "/api/profile",
+    { email }
+  );
+}
+
+export async function updateProfile(email: string, data: { fullName?: string; email?: string }) {
+  return ApiService.put<unknown>(`/api/profile?email=${encodeURIComponent(email)}`, data);
+}
+
+export async function uploadProfileImage(email: string, file: File) {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await api.post<{ imagePath: string }>(
+    `/api/profile/image?email=${encodeURIComponent(email)}`,
+    form,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+  return res.data;
+}

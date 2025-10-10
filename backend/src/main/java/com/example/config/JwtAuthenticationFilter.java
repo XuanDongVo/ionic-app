@@ -29,42 +29,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String username;
+        final String email;
 
-        // Kiểm tra header Authorization
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Lấy token từ header
         jwt = authHeader.substring(7);
 
         try {
-            // Lấy username từ token
-            username = jwtUtil.extractUsername(jwt);
+            // 🔥 Lấy email từ JWT
+            email = jwtUtil.extractUsername(jwt);
 
-            // Nếu username tồn tại và chưa được authenticate
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
-                // Validate token
+                // 🔥 Validate JWT
                 if (jwtUtil.validateToken(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } catch (Exception e) {
-            // Log lỗi nếu cần
-            logger.error("Cannot set user authentication: {}", e);
+            logger.error("JWT Authentication error: {}"+ e.getMessage());
         }
 
         filterChain.doFilter(request, response);
     }
 }
-
