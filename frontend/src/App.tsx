@@ -24,6 +24,9 @@ import { Route, Redirect, useLocation } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Search from './pages/Search';
+import ProfileEdit from './pages/ProfileEdit';
+import ChangePassword from './pages/ChangePassword';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Register from './pages/Register'
 import ForgotPassword from './pages/ForgotPassword';
@@ -59,7 +62,9 @@ const App: React.FC = () => {
           {/* App Pages */}
           <Route path="/home" component={Home} exact />
           <Route path="/search" component={Search} exact />
-
+          <Route path="/profile/edit" component={ProfileEdit} exact />
+          <Route path="/profile/change-password" component={ChangePassword} exact />
+          <Route path="/settings" component={Settings} exact />
           {/* Redirect */}
           <Redirect exact from="/" to="/home" />
         </IonRouterOutlet>
