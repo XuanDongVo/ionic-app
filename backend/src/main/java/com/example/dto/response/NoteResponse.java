@@ -30,5 +30,7 @@ public class NoteResponse {
     private int subNotesCount;
     private int attachmentsCount;
     private ReminderResponse reminder;
+    private boolean isCompleted;
+
 }
 

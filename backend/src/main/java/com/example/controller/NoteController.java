@@ -160,4 +160,12 @@ public class NoteController {
         NoteResponse note = noteService.toggleArchive(id, userId);
         return ResponseEntity.ok(ApiResponse.success("Toggle archive thành công", note));
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<NoteResponse> updateNoteStatus(
+            @PathVariable Long id,
+            @RequestParam boolean isCompleted) {
+        NoteResponse updatedNote = noteService.updateStatus(id, isCompleted);
+        return ResponseEntity.ok(updatedNote);
+    }
 }

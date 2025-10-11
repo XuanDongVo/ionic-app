@@ -61,31 +61,31 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/image")
-    public ResponseEntity<?> uploadImage(@RequestParam String email,
-                                         @RequestParam("file") MultipartFile file) throws IOException {
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng");
-        }
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Không có tập tin nào được tải lên");
-        }
-
-        Path uploadDir = Paths.get("uploads/profile");
-        Files.createDirectories(uploadDir);
-        String filename = System.currentTimeMillis() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
-        Path target = uploadDir.resolve(filename);
-        Files.copy(file.getInputStream(), target);
-
-        User user = userOpt.get();
-        user.setImagePath("/uploads/profile/" + filename);
-        userRepository.save(user);
-
-        Map<String, Object> res = new HashMap<>();
-        res.put("imagePath", user.getImagePath());
-        return ResponseEntity.ok(res);
-    }
+//    @PostMapping("/image")
+//    public ResponseEntity<?> uploadImage(@RequestParam String email,
+//                                         @RequestParam("file") MultipartFile file) throws IOException {
+//        Optional<User> userOpt = userRepository.findByEmail(email);
+//        if (userOpt.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng");
+//        }
+//        if (file.isEmpty()) {
+//            return ResponseEntity.badRequest().body("Không có tập tin nào được tải lên");
+//        }
+//
+//        Path uploadDir = Paths.get("uploads/profile");
+//        Files.createDirectories(uploadDir);
+//        String filename = System.currentTimeMillis() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
+//        Path target = uploadDir.resolve(filename);
+//        Files.copy(file.getInputStream(), target);
+//
+//        User user = userOpt.get();
+//        user.setImagePath("/uploads/profile/" + filename);
+//        userRepository.save(user);
+//
+//        Map<String, Object> res = new HashMap<>();
+//        res.put("imagePath", user.getImagePath());
+//        return ResponseEntity.ok(res);
+//    }
 }
 
 
