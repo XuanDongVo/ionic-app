@@ -47,7 +47,8 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        String token = jwtUtil.generateToken(savedUser.getUsername(), savedUser.getId());
+        // Dùng email làm subject (giống như login) để nhất quán
+        String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getId());
 
         return new AuthResponse(token, savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
     }

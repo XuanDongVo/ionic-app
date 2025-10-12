@@ -14,23 +14,47 @@ import {
   IonButton,
   IonNote,
 } from '@ionic/react';
+import { changePassword } from '../state/api';
+import { useHistory } from 'react-router-dom';
 
 const ChangePassword: React.FC = () => {
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [confirm, setConfirm] = useState('');
   const [saving, setSaving] = useState(false);
+  const history = useHistory();
 
   const onSubmit = async () => {
-    if (next !== confirm) {
-      alert('Passwords do not match');
+    if (!current || !next || !confirm) {
+      alert('Please fill in all fields');
       return;
     }
+
+    if (next !== confirm) {
+      alert('New passwords do not match');
+      return;
+    }
+
+    if (next.length < 6) {
+      alert('Password must be at least 6 characters long');
+      return;
+    }
+
     setSaving(true);
     try {
-      // Placeholder: backend change password not implemented yet
-      await new Promise((r) => setTimeout(r, 600));
-      alert('Password updated');
+      await changePassword({
+        currentPassword: current,
+        newPassword: next,
+        confirmPassword: confirm,
+      });
+      alert('Password changed successfully!');
+      setCurrent('');
+      setNext('');
+      setConfirm('');
+      history.push('/settings');
+    } catch (error: any) {
+      console.error('Failed to change password:', error);
+      alert(error.response?.data?.message || 'Failed to change password');
     } finally {
       setSaving(false);
     }

@@ -54,10 +54,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        // FIX CORS: Chỉ định rõ origins thay vì dùng "*"
+        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Cho phép tất cả origins
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(false);
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Cho phép tất cả headers bao gồm Authorization
+        configuration.setAllowCredentials(true); // Cho phép gửi credentials (Authorization header)
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization header
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

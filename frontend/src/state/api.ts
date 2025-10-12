@@ -1,7 +1,18 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
 import { isPlatform } from "@ionic/react";
 
-export const baseUrl = "http://localhost:8080";
+// export const baseUrl = "http://localhost:8080";
+
+// Tự động detect platform và dùng IP phù hợp
+// Khi chạy trên thiết bị Android/iOS thật, cần dùng IP của máy tính thay vì localhost
+// TODO: Thay đổi IP này thành IP máy tính của bạn khi test trên thiết bị thật
+const API_IP = "192.168.137.1"; // THAY ĐỔI IP NÀY!
+
+export const baseUrl = isPlatform("capacitor") || isPlatform("cordova") 
+  ? `http://${API_IP}:8080`  // Chạy trên mobile device
+  : "http://localhost:8080";  // Chạy trên browser
+
+console.log("API baseUrl:", baseUrl);
 
 export const api: AxiosInstance = axios.create({
   baseURL: baseUrl,
@@ -15,7 +26,8 @@ api.interceptors.request.use(
   (
     config: import("axios").InternalAxiosRequestConfig
   ): import("axios").InternalAxiosRequestConfig => {
-    const token = localStorage.getItem("accessToken");
+    // Sử dụng "token" để khớp với Login.tsx
+    const token = localStorage.getItem("token");
     if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -116,4 +128,48 @@ export async function uploadProfileImage(email: string, file: File) {
     }
   );
   return res.data;
+}
+
+//Sử dụng JWT authentication
+export interface UserProfileData {
+  id: number;
+  username: string;
+  email: string;
+  profileImage: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ProfileApiResponse {
+  success: boolean;
+  message: string;
+  data: UserProfileData;
+}
+
+export async function getCurrentUserProfile(): Promise<UserProfileData> {
+  const response = await ApiService.get<ProfileApiResponse>('/api/profile/me');
+  return response.data;
+}
+
+export async function updateCurrentUserProfile(data: { username?: string; email?: string }): Promise<UserProfileData> {
+  const response = await ApiService.put<ProfileApiResponse>('/api/profile/me', data);
+  return response.data;
+}
+
+export async function uploadCurrentUserImage(file: File): Promise<{ profileImage: string }> {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await api.post<ProfileApiResponse>(
+    '/api/profile/me/image',
+    form,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+  return res.data.data as { profileImage: string };
+}
+
+export async function changePassword(data: { currentPassword: string; newPassword: string; confirmPassword: string }) {
+  const response = await ApiService.put<{ success: boolean; message: string; data: null }>('/api/profile/me/change-password', data);
+  return response;
 }
