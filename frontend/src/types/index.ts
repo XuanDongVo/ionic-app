@@ -17,8 +17,24 @@ export interface Note {
   title: string;
   content: string;
   color: string;
+  completed?: boolean;
 }
 
 export interface NoteCardProps {
   note: Note;
+  onToggleStatus?: (id: number) => void;
+  onDelete?: (id: number) => void;
+}
+
+// User profile models
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  imagePath?: string;
+}
+
+export interface UpdateProfilePayload {
+  fullName?: string;
+  email?: string;
 }
