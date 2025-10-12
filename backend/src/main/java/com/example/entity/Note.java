@@ -71,6 +71,9 @@ public class Note {
     @OneToMany(mappedBy = "parentNote", cascade = CascadeType.ALL)
     private Set<Note> subNotes = new HashSet<>();
 
+    @Column(nullable = false)
+    private boolean isCompleted = false;
+
     // --- CÁC MỐI QUAN HỆ KHÁC ---
     // Một ghi chú có thể có nhiều thẻ
     @ManyToMany(fetch = FetchType.LAZY)

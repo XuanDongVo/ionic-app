@@ -200,7 +200,16 @@ const Home: React.FC = () => {
           <>
             <div className="notes-grid">
               {notes.map((note) => (
-                <NoteCard key={note.id} note={note} />
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  onToggleStatus={(id) => {
+                    setNotes(notes.map(n => n.id === id ? { ...n, completed: !n.completed } : n));
+                  }}
+                  onDelete={(id) => {
+                    setNotes(notes.filter(n => n.id !== id));
+                  }}
+                />
               ))}
             </div>
 

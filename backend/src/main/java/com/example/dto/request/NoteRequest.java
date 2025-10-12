@@ -32,5 +32,8 @@ public class NoteRequest {
     private Long parentNoteId;
 
     private Set<Long> tagIds;
+
+    private Boolean isCompleted;
+
 }
 
