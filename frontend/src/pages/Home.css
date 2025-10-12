@@ -194,4 +194,18 @@ ion-card-content {
   }
 }
 
+.note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.note-checkbox {
+  margin-right: 8px;
+}
+
+.delete-btn {
+  --color: #eb445a; 
+  margin-left: auto;
+}
 

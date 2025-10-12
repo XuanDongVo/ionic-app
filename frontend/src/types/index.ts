@@ -17,10 +17,13 @@ export interface Note {
   title: string;
   content: string;
   color: string;
+  completed?: boolean;
 }
 
 export interface NoteCardProps {
   note: Note;
+  onToggleStatus?: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 // User profile models
