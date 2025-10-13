@@ -16,8 +16,38 @@ export interface Note {
   id: number;
   title: string;
   content: string;
-  color: string;
+  color?: string;
   completed?: boolean;
+  isPinned?: boolean;
+  isArchived?: boolean;
+  notebookId?: number;
+  parentNoteId?: number;
+  tags?: Tag[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  color?: string;
+}
+
+export interface Notebook {
+  id: number;
+  name: string;
+  description?: string;
+  color?: string;
+}
+
+export interface NoteFormData {
+  title: string;
+  content?: string;
+  notebookId?: number;
+  parentNoteId?: number;
+  tags?: number[];
+  isPinned?: boolean;
+  isArchived?: boolean;
 }
 
 export interface NoteCardProps {
