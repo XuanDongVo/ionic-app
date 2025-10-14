@@ -21,13 +21,13 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onToggleStatus, onDelete }) =
         minHeight: '100px',
         maxHeight: '300px',
         overflow: 'hidden',
-        opacity: note.completed ? 0.6 : 1, // mờ nếu đã hoàn thành
+        opacity: note.isCompleted ? 0.6 : 1, // mờ nếu đã hoàn thành
       }}
     >
       <IonCardHeader>
         <div className="note-header">
           <IonCheckbox
-            checked={note.completed}
+            checked={note.isCompleted}
             onIonChange={() => onToggleStatus?.(note.id)}
             className="note-checkbox"
           />

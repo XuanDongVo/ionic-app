@@ -7,70 +7,57 @@ import {
   IonToolbar,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
+  IonLabel,
+  IonItem
 } from '@ionic/react';
 import NoteCard from '../components/NoteCard';
 import './Home.css';
-import { Note } from '../types';
+import { Note, Notebook } from '../types';
+import noteService from '../state/noteService/noteService';
 
 const Home: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [notebooks, setNotebooks] = useState<Notebook[]>([]);
+
+  const fetchNotebooks = async () => {
+    try {
+      const fetchedNotebooks = await noteService.getNotebooks();
+      if (fetchedNotebooks.length > 0) {
+        const allNotebooksOption = { id: 0, name: 'All Notebooks' };
+        setNotebooks([allNotebooksOption, ...fetchedNotebooks]);
+      }
+      fetchAllNotes();
+    } catch (error) {
+      console.error("Error fetching notebooks:", error);
+      fetchAllNotes();
+    }
+  };
+
+  const fetchAllNotes = async () => {
+    try {
+      const fetchedNotes = await noteService.getAllNotes();
+      setNotes(fetchedNotes);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    }
+  };
+
+  const fetchNotesByNotebookId = async (notebookId: number) => {
+    try {
+      if (notebookId === 0) {
+        fetchAllNotes();
+      } else {
+        const fetchedNotes = await noteService.getNotesByNotebookId(notebookId);
+        setNotes(fetchedNotes);
+      }
+    } catch (error) {
+      console.error(`Error fetching notes for notebook ${notebookId}:`, error);
+    }
+  }
 
   useEffect(() => {
-    const demoNotes: Note[] = [
-      {
-        id: 1,
-        title: 'New Product Idea Design',
-        content:
-          'Create a mobile app UI Kit that provide a basic notes functionality but with some improvement. There will be a choice to select what kind of notes that user needed.',
-        color: '#F5F5DC',
-      },
-      {
-        id: 2,
-        title: 'New Product Idea Design',
-        content: 'Create a mobile app UI Kit that provide a basic notes functionality but with some improvement.',
-        color: '#FFF8DC',
-      },
-      {
-        id: 3,
-        title: 'Shopping List',
-        content: 'Milk, eggs, bread, butter, cheese',
-        color: '#FAFAD2',
-      },
-      {
-        id: 4,
-        title: 'Meeting Notes',
-        content: 'Discuss project timeline and resource allocation. Follow up with team about deliverables.',
-        color: '#E6E6FA',
-      },
-      {
-        id: 5,
-        title: 'Book Recommendations',
-        content: 'Atomic Habits, Deep Work, The Psychology of Money',
-        color: '#F0FFF0',
-      },
-      {
-        id: 6,
-        title: 'Weekly Goals',
-        content: 'Finish project proposal, Exercise 3 times, Call mom, Read 50 pages',
-        color: '#F0F8FF',
-      },
-    ];
-    setNotes(demoNotes);
+    fetchNotebooks();
   }, []);
-
-  const generateItems = () => {
-    const newNotes: Note[] = [];
-    const startId = notes.length + 1;
-    for (let i = 0; i < 6; i++) {
-      newNotes.push({
-        id: startId + i,
-        title: `Note Title ${startId + i}`,
-        content: 'This is a sample note content. It can be quite long, so it should be truncated in the card view.',
-        color: ['#F5F5DC', '#FFF8DC', '#FAFAD2', '#E6E6FA', '#F0FFF0', '#F0F8FF'][Math.floor(Math.random() * 6)],
-      });
-    }
-    setNotes([...notes, ...newNotes]);
-  };
 
   return (
     <IonPage>
@@ -80,7 +67,38 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
+
       <IonContent fullscreen>
+
+        <div
+          style={{
+            display: "flex",
+            overflowX: "auto",
+            gap: "12px",
+            padding: "10px",
+            scrollbarWidth: "none",
+
+          }}
+          className="notebook-scroll"
+        >
+          {notebooks.map((nb) => (
+            <IonItem
+              key={nb.id}
+              button
+              onClick={() => fetchNotesByNotebookId(nb.id)}
+              style={{
+                flex: "0 0 auto",
+                minWidth: "120px",
+                borderRadius: "10px",
+                color: "black",
+                justifyContent: "center",
+              }}
+            >
+              <IonLabel style={{ textAlign: "center" }}>{nb.name}</IonLabel>
+            </IonItem>
+          ))}
+        </div>
+
         {notes.length === 0 ? (
           <div className="empty-state">
             <div className="empty-illustration">
@@ -204,7 +222,7 @@ const Home: React.FC = () => {
                   key={note.id}
                   note={note}
                   onToggleStatus={(id) => {
-                    setNotes(notes.map(n => n.id === id ? { ...n, completed: !n.completed } : n));
+                    setNotes(notes.map(n => n.id === id ? { ...n, isCompleted: !n.isCompleted } : n));
                   }}
                   onDelete={(id) => {
                     setNotes(notes.filter(n => n.id !== id));
@@ -216,7 +234,6 @@ const Home: React.FC = () => {
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <IonInfiniteScroll
                 onIonInfinite={(event) => {
-                  generateItems();
                   setTimeout(() => event.target.complete(), 2000);
                 }}
               >
