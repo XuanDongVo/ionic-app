@@ -1,0 +1,38 @@
+/* EditNote.css */
+.edit-note-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.edit-note-container ion-item {
+  margin-bottom: 16px;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+.edit-note-container ion-textarea {
+  margin-top: 8px;
+  border: 1px solid var(--ion-color-medium);
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 200px;
+}
+
+.edit-note-container ion-input {
+  margin-top: 8px;
+  border: 1px solid var(--ion-color-medium);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.button-container {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.button-container ion-button {
+  margin: 0;
+}
+

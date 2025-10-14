@@ -16,7 +16,7 @@ import {
   IonNote,
   IonRouterLink,
 } from '@ionic/react';
-import { createOutline, lockClosedOutline, notificationsOutline, textOutline, logOutOutline, mailOutline } from 'ionicons/icons';
+import { createOutline, lockClosedOutline, notificationsOutline, textOutline, logOutOutline, mailOutline, constructOutline } from 'ionicons/icons';
 import './Settings.css';
 import { fetchProfile } from '../state/api';
 
@@ -79,6 +79,14 @@ const Settings: React.FC = () => {
         <div className="section-label">APP SETTINGS</div>
 
         <IonList inset className="settings-list">
+          <IonItem button detail={true} routerLink="/dev-tools" color="warning">
+            <IonIcon icon={constructOutline} slot="start" />
+            <IonLabel>
+              <h2>🛠️ Developer Tools</h2>
+              <p>Mock token & testing</p>
+            </IonLabel>
+          </IonItem>
+
           <IonItem button detail={true} routerLink="/profile/change-password">
             <IonIcon icon={lockClosedOutline} slot="start" />
             <IonLabel>Change Password</IonLabel>
@@ -111,5 +119,3 @@ const Settings: React.FC = () => {
 };
 
 export default Settings;
-
-

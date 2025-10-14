@@ -1,0 +1,29 @@
+/* NoteList.css */
+.note-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+}
+
+.empty-state p {
+  margin: 8px 0;
+}
+
+.empty-state-hint {
+  font-size: 14px;
+  font-style: italic;
+}
+
+ion-segment {
+  padding: 8px;
+}
+
+ion-fab-button {
+  --background: var(--ion-color-primary);
+}
+
