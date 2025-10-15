@@ -39,8 +39,21 @@ export async function getAllNotes(): Promise<Note[]> {
   }
 }
 
+export async function searchNotes(keyWord: string): Promise<Note[]> {
+  try {
+    const wrapper = await ApiService.get<ApiResponse<Note[]>>(
+      `/api/notes/search?keyword=${encodeURIComponent(keyWord)}`
+    );
+    return wrapper.data;
+  } catch (err) {
+    console.error("Error searching notes:", err);
+    throw err;
+  }
+}
+
 export default {
   getNotebooks,
   getNotesByNotebookId,
   getAllNotes,
+  searchNotes,
 };

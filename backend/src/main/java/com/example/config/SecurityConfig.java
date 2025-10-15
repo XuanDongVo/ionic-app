@@ -39,7 +39,6 @@ public class SecurityConfig {
                         // Cho phép truy cập công khai
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
                         // Yêu cầu authentication cho các endpoint khác
                         .anyRequest().authenticated()
                 )
@@ -55,10 +54,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8100"));
+        // FIX CORS: Chỉ định rõ origins thay vì dùng "*"
+        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Cho phép tất cả origins
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Cho phép tất cả headers bao gồm Authorization
+        configuration.setAllowCredentials(true); // Cho phép gửi credentials (Authorization header)
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization header
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

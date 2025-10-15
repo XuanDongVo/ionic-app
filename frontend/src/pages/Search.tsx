@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-    IonHeader,
     IonPage,
     IonSearchbar,
     IonContent,
@@ -8,69 +7,34 @@ import {
 import { Note } from '../types';
 import NoteCard from '../components/NoteCard';
 import './Search.css';
+import noteService from '../state/noteService/noteService';
 
 const Search = () => {
     const [searchText, setSearchText] = useState('');
-    const [allNotes, setAllNotes] = useState<Note[]>([]);
     const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
-    useEffect(() => {
-        const sampleNotes: Note[] = [
-            {
-                id: 1,
-                title: 'New Product Idea Design',
-                content: 'Create a mobile app UI Kit that provide a basic notes functionality but with some improvement. There will be a choice to select what kind of notes that user needed.',
-                color: '#F5F5DC' // Beige
-            },
-            {
-                id: 2,
-                title: 'New Product Idea Design',
-                content: 'Create a mobile app UI Kit that provide a basic notes functionality but with some improvement.',
-                color: '#FFF8DC' // Cream
-            },
-            {
-                id: 3,
-                title: 'Shopping List',
-                content: 'Milk, eggs, bread, butter, cheese',
-                color: '#FAFAD2' // Light yellow
-            },
-            {
-                id: 4,
-                title: 'Meeting Notes',
-                content: 'Discuss project timeline and resource allocation. Follow up with team about deliverables.',
-                color: '#E6E6FA' // Lavender
-            },
-            {
-                id: 5,
-                title: 'Book Recommendations',
-                content: 'Atomic Habits, Deep Work, The Psychology of Money',
-                color: '#F0FFF0' // Honeydew
-            },
-            {
-                id: 6,
-                title: 'Weekly Goals',
-                content: 'Finish project proposal, Exercise 3 times, Call mom, Read 50 pages',
-                color: '#F0F8FF' // Alice blue
-            }
-        ];
 
-        setAllNotes(sampleNotes);
-        setFilteredNotes([]);
-    }, []);
+    const searchNotes = async (keyWord: string): Promise<Note[]> => {
+        try {
+            const notes = await noteService.searchNotes(keyWord);
+            setFilteredNotes(notes);
+            return notes;
+        } catch (error) {
+            console.error("Error searching notes:", error);
+            throw error;
+        }
+    };
 
-    const handleSearch = (e: CustomEvent) => {
+
+
+    const handleSearch = async (e: CustomEvent) => {
         const query = e.detail.value?.toLowerCase() || '';
         setSearchText(query);
 
         if (query.trim() === '') {
             setFilteredNotes([]);
         } else {
-            const results = allNotes.filter(
-                note =>
-                    note.title.toLowerCase().includes(query) ||
-                    note.content.toLowerCase().includes(query)
-            );
-            setFilteredNotes(results);
+            await searchNotes(query);
         }
     };
 
