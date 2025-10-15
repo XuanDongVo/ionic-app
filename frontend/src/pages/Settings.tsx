@@ -78,7 +78,7 @@ const Settings: React.FC = () => {
           <div className="settings-profile-row">
             <IonAvatar style={{ width: 56, height: 56 }}>
               {profileImage ? (
-                <img alt="avatar" src={`${baseUrl}${profileImage}?t=${Date.now()}`} />
+                <img alt="avatar" src={profileImage.startsWith('http') ? profileImage : `${baseUrl}${profileImage}`} />
               ) : (
                 <img alt="avatar" src="/favicon.png" />
               )}

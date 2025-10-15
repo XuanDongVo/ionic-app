@@ -232,7 +232,7 @@ const ProfileEdit: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <IonAvatar style={{ width: 112, height: 112 }}>
                 {profileImage ? (
-                  <img alt="avatar" src={`${baseUrl}${profileImage}?t=${Date.now()}`} />
+                  <img alt="avatar" src={profileImage.startsWith('http') ? profileImage : `${baseUrl}${profileImage}`} />
                 ) : (
                   <img alt="avatar" src="/favicon.png" />
                 )}
