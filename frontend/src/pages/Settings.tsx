@@ -15,30 +15,52 @@ import {
   IonIcon,
   IonNote,
   IonRouterLink,
+  useIonViewWillEnter,
 } from '@ionic/react';
 import { createOutline, lockClosedOutline, notificationsOutline, textOutline, logOutOutline, mailOutline, constructOutline } from 'ionicons/icons';
 import './Settings.css';
-import { fetchProfile } from '../state/api';
-
-const DEFAULT_EMAIL = 'demo@example.com';
+import { getCurrentUserProfile, baseUrl } from '../state/api';
+import { useHistory } from 'react-router-dom';
 
 const Settings: React.FC = () => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState(DEFAULT_EMAIL);
-  const [imagePath, setImagePath] = useState<string | undefined>();
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const history = useHistory();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await fetchProfile(email);
-        setFullName(data.fullName);
-        setEmail(data.email);
-        setImagePath(data.imagePath);
-      } catch (_) {
-        // ignore for demo
+  // Function để load profile
+  const loadProfile = async () => {
+    try {
+      setLoading(true);
+      
+      const data = await getCurrentUserProfile();
+      
+      setUsername(data.username);
+      setEmail(data.email);
+      setProfileImage(data.profileImage);
+    } catch (error: any) {
+      // Nếu không có token hoặc token hết hạn, redirect về login
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token found, redirecting to login');
+        history.push('/login');
       }
-    })();
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load profile khi component mount
+  useEffect(() => {
+    loadProfile();
+  }, [history]);
+
+  // Reload profile mỗi khi vào trang Settings (từ ProfileEdit về)
+  useIonViewWillEnter(() => {
+    console.log('Settings page entered, reloading profile...');
+    loadProfile();
+  });
 
   return (
     <IonPage>
@@ -55,13 +77,17 @@ const Settings: React.FC = () => {
         <div className="settings-header">
           <div className="settings-profile-row">
             <IonAvatar style={{ width: 56, height: 56 }}>
-              {imagePath ? <img alt="avatar" src={imagePath} /> : <img alt="avatar" src="/favicon.png" />}
+              {profileImage ? (
+                <img alt="avatar" src={`${baseUrl}${profileImage}?t=${Date.now()}`} />
+              ) : (
+                <img alt="avatar" src="/favicon.png" />
+              )}
             </IonAvatar>
             <div>
-              <div className="settings-name">{fullName || 'Michael Antonio'}</div>
+              <div className="settings-name">{loading ? 'Loading...' : (username || 'User')}</div>
               <div className="settings-email">
                 <IonIcon icon={mailOutline} />
-                <span>{email}</span>
+                <span>{loading ? 'Loading...' : email}</span>
               </div>
             </div>
           </div>
@@ -106,7 +132,16 @@ const Settings: React.FC = () => {
         </IonList>
 
         <IonList inset className="logout-list">
-          <IonItem button detail={false} lines="none" color="danger" onClick={() => alert('Logged out (demo)')}>
+          <IonItem 
+            button 
+            detail={false} 
+            lines="none" 
+            color="danger" 
+            onClick={() => {
+              localStorage.removeItem('token');
+              history.push('/login');
+            }}
+          >
             <IonIcon icon={logOutOutline} slot="start" />
             <IonLabel>Log Out</IonLabel>
           </IonItem>

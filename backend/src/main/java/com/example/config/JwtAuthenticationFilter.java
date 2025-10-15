@@ -39,13 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
 
         try {
-            // 🔥 Lấy email từ JWT
+            // Lấy email từ JWT
             email = jwtUtil.extractUsername(jwt);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
-                // 🔥 Validate JWT
+                // Validate JWT
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(

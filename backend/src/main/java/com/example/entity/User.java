@@ -31,6 +31,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "profile_image", length = 512)
+    private String profileImage; // URL hoặc path đến ảnh đại diện
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
