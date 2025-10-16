@@ -78,7 +78,7 @@ const App: React.FC = () => {
           <Route path="/notes/edit/:id" component={EditNote} exact />
 
           {/* Redirect */}
-          <Redirect exact from="/" to="/home" />
+          <Redirect exact from="/" to="/login" />
         </IonRouterOutlet>
 
         {/* Hiện TabBar nếu KHÔNG phải các trang auth */}
