@@ -17,7 +17,6 @@ export interface Note {
   title: string;
   content: string;
   color?: string;
-  completed?: boolean;
   isPinned?: boolean;
   isArchived?: boolean;
   notebookId?: number;
@@ -25,6 +24,7 @@ export interface Note {
   tags?: Tag[];
   createdAt?: string;
   updatedAt?: string;
+  isCompleted?: boolean;
 }
 
 export interface Tag {
