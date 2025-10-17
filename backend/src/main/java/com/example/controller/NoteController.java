@@ -100,6 +100,14 @@ public class NoteController {
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách notes đã lưu trữ thành công", notes));
     }
 
+    // lấy danh sách note đã hoàn thành
+    @GetMapping("/completed")
+    public ResponseEntity<ApiResponse<List<NoteResponse>>> getCompletedNotes(HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
+        List<NoteResponse> notes = noteService.getCompletedNotes(userId);
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách notes đã hoàn thành thành công", notes));
+    }
+
     // Lấy notes theo notebook
     @GetMapping("/notebook/{notebookId}")
     public ResponseEntity<ApiResponse<List<NoteResponse>>> getNotesByNotebook(
@@ -161,10 +169,11 @@ public class NoteController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<NoteResponse> updateNoteStatus(
+    public ResponseEntity<ApiResponse<NoteResponse>> updateNoteStatus(
             @PathVariable Long id,
-            @RequestParam boolean isCompleted) {
-        NoteResponse updatedNote = noteService.updateStatus(id, isCompleted);
-        return ResponseEntity.ok(updatedNote);
+            HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
+        NoteResponse updatedNote = noteService.updateStatus(id, userId);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái note thành công", updatedNote));
     }
 }

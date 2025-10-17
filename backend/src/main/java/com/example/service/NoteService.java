@@ -180,6 +180,15 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
+    public List<NoteResponse> getCompletedNotes(Long userId) {
+        List<Note> notes = noteRepository.findByUserIdAndIsCompletedTrue(userId);
+        // Sử dụng lại hàm convertToResponse để chuyển đổi sang DTO
+        return notes.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<NoteResponse> getNotesByNotebook(Long notebookId, Long userId) {
         List<Note> notes = noteRepository.findByNotebookIdAndUserId(notebookId, userId);
         return notes.stream()
@@ -242,6 +251,7 @@ public class NoteService {
                 .color(note.getColor())
                 .isPinned(note.isPinned())
                 .isArchived(note.isArchived())
+                .isCompleted(note.isCompleted())
                 .createdAt(note.getCreatedAt())
                 .updatedAt(note.getUpdatedAt())
                 .build();
@@ -300,50 +310,51 @@ public class NoteService {
     }
 
     // update stause
-    public NoteResponse updateStatus(Long noteId, boolean isCompleted) {
-        Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new RuntimeException("Note không tồn tại"));
+    @Transactional
+    public NoteResponse updateStatus(Long noteId, Long userId) {
+        Note note = noteRepository.findByIdAndUserId(noteId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Note không tồn tại hoặc bạn không có quyền truy cập"));
 
-        note.setCompleted(isCompleted);
-        note.setUpdatedAt(LocalDateTime.now());
-        noteRepository.save(note);
+        note.setCompleted(!note.isCompleted());
+        Note updatedNote = noteRepository.save(note);
+        return convertToResponse(updatedNote);
 
-        return NoteResponse.builder()
-                .id(note.getId())
-                .title(note.getTitle())
-                .content(note.getContent())
-                .color(note.getColor())
-                .isPinned(note.isPinned())
-                .isArchived(note.isArchived())
-                .isCompleted(note.isCompleted())
-                .createdAt(note.getCreatedAt())
-                .updatedAt(note.getUpdatedAt())
-                .userId(note.getUser() != null ? note.getUser().getId() : null)
-                .username(note.getUser() != null ? note.getUser().getUsername() : null)
-                .notebookId(note.getNotebook() != null ? note.getNotebook().getId() : null)
-                .notebookName(note.getNotebook() != null ? note.getNotebook().getName() : null)
-                .parentNoteId(note.getParentNote() != null ? note.getParentNote().getId() : null)
-                .subNotesCount(note.getSubNotes() != null ? note.getSubNotes().size() : 0)
-                .attachmentsCount(note.getAttachments() != null ? note.getAttachments().size() : 0)
-
-                .reminder(note.getReminder() != null
-                        ? ReminderResponse.builder()
-                        .id(note.getReminder().getId())
-                        .reminderTime(note.getReminder().getReminderTime())
-                        .repeatType(note.getReminder().getRepeatType())
-                        .isCompleted(note.getReminder().isCompleted())
-                        .build()
-                        : null)
-                .tags(note.getTags() != null
-                        ? note.getTags().stream()
-                        .map(tag -> TagResponse.builder()
-                                .id(tag.getId())
-                                .name(tag.getName())
-                                .color(tag.getColor())
-                                .build())
-                        .collect(Collectors.toSet())
-                        : null)
-                .build();
+//        return NoteResponse.builder()
+//                .id(note.getId())
+//                .title(note.getTitle())
+//                .content(note.getContent())
+//                .color(note.getColor())
+//                .isPinned(note.isPinned())
+//                .isArchived(note.isArchived())
+//                .isCompleted(note.isCompleted())
+//                .createdAt(note.getCreatedAt())
+//                .updatedAt(note.getUpdatedAt())
+//                .userId(note.getUser() != null ? note.getUser().getId() : null)
+//                .username(note.getUser() != null ? note.getUser().getUsername() : null)
+//                .notebookId(note.getNotebook() != null ? note.getNotebook().getId() : null)
+//                .notebookName(note.getNotebook() != null ? note.getNotebook().getName() : null)
+//                .parentNoteId(note.getParentNote() != null ? note.getParentNote().getId() : null)
+//                .subNotesCount(note.getSubNotes() != null ? note.getSubNotes().size() : 0)
+//                .attachmentsCount(note.getAttachments() != null ? note.getAttachments().size() : 0)
+//
+//                .reminder(note.getReminder() != null
+//                        ? ReminderResponse.builder()
+//                        .id(note.getReminder().getId())
+//                        .reminderTime(note.getReminder().getReminderTime())
+//                        .repeatType(note.getReminder().getRepeatType())
+//                        .isCompleted(note.getReminder().isCompleted())
+//                        .build()
+//                        : null)
+//                .tags(note.getTags() != null
+//                        ? note.getTags().stream()
+//                        .map(tag -> TagResponse.builder()
+//                                .id(tag.getId())
+//                                .name(tag.getName())
+//                                .color(tag.getColor())
+//                                .build())
+//                        .collect(Collectors.toSet())
+//                        : null)
+//                .build();
     }
 
 

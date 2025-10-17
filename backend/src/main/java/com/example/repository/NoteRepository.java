@@ -20,6 +20,8 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     List<Note> findByUserIdAndIsArchivedTrue(Long userId);
 
+    List<Note> findByUserIdAndIsCompletedTrue(Long userId);
+
     List<Note> findByNotebookIdAndUserId(Long notebookId, Long userId);
 
     @Query("SELECT DISTINCT n FROM Note n JOIN n.tags t WHERE t.id = :tagId AND n.user.id = :userId")

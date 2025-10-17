@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, 
+  useEffect, 
+} from 'react';
 import {
   IonContent,
   IonHeader,
@@ -8,7 +10,9 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonLabel,
-  IonItem
+  IonItem,
+  IonToast,
+  // useIonViewWillEnter,
 } from '@ionic/react';
 import NoteCard from '../components/NoteCard';
 import './Home.css';
@@ -18,6 +22,9 @@ import noteService from '../state/noteService/noteService';
 const Home: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [notebooks, setNotebooks] = useState<Notebook[]>([]);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastColor, setToastColor] = useState<'success' | 'danger'>('success');
 
   const fetchNotebooks = async () => {
     try {
@@ -55,9 +62,61 @@ const Home: React.FC = () => {
     }
   }
 
+  const handleToggleStatus = async (id: number) => {
+    const noteToUpdate = notes.find(n => n.id === id);
+    if (!noteToUpdate) return;
+
+    // Đảo ngược trạng thái hoàn thành
+    const newStatus = !noteToUpdate.isCompleted;
+    if (!newStatus) {
+    localStorage.setItem('note-updated', Date.now().toString());
+    }
+
+    try {
+      await noteService.updateNoteStatus(id, newStatus);
+
+      const message = newStatus
+        ? 'Note đã được chuyển sang mục hoàn thành!'
+        : 'Note đã được chuyển lại danh sách chính!';
+
+      setToastMessage(message);
+      setToastColor('success');
+      setShowToast(true);
+
+      // Xóa note khỏi danh sách hiện tại
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi cập nhật';
+      setToastMessage(errorMessage);
+      setToastColor('danger');
+      setShowToast(true);
+    }
+  };
+
+
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === 'note-updated') {
+        fetchAllNotes(); // Tải lại danh sách ghi chú cho trang Home
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+
+    return () => window.removeEventListener('storage', handleStorage);
+    }, []);
+
+
   useEffect(() => {
     fetchNotebooks();
   }, []);
+
+  // useIonViewWillEnter(() => {
+  //   console.log('Home view will enter, fetching notes...');
+  //   fetchNotebooks(); // Hàm này sẽ gọi fetchAllNotes
+  // });
 
   return (
     <IonPage>
@@ -67,6 +126,13 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
+      <IonToast
+        isOpen={showToast}
+        onDidDismiss={() => setShowToast(false)}
+        message={toastMessage}
+        duration={2000}
+        color={toastColor}
+      />
 
       <IonContent fullscreen>
 
@@ -221,9 +287,7 @@ const Home: React.FC = () => {
                 <NoteCard
                   key={note.id}
                   note={note}
-                  onToggleStatus={(id) => {
-                    setNotes(notes.map(n => n.id === id ? { ...n, isCompleted: !n.isCompleted } : n));
-                  }}
+                  onToggleStatus={handleToggleStatus}
                   onDelete={(id) => {
                     setNotes(notes.filter(n => n.id !== id));
                   }}

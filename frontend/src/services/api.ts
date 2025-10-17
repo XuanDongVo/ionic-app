@@ -498,7 +498,7 @@ export async function updateNoteStatus(id: number, isCompleted: boolean) {
                     reject(new Error("Không tìm thấy note"));
                     return;
                 }
-                mockNotes[noteIndex].completed = isCompleted;
+                mockNotes[noteIndex].isCompleted = isCompleted;
                 mockNotes[noteIndex].updatedAt = new Date().toISOString();
                 resolve({
                     success: true,
@@ -516,6 +516,32 @@ export async function updateNoteStatus(id: number, isCompleted: boolean) {
 
     if (res.status === 401) throw new Error("Unauthorized");
     if (!res.ok) throw new Error("Cập nhật trạng thái note thất bại");
+
+    return res.json();
+}
+
+// Lấy notes đã hoàn thành
+export async function getCompletedNotes() {
+    // Mock mode
+    if (USE_MOCK_DATA) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({
+                    success: true,
+                    message: "Lấy danh sách notes đã hoàn thành thành công",
+                    // Giả sử note có thuộc tính 'completed' trong mock data
+                    data: mockNotes.filter(n => n.isCompleted),
+                });
+            }, 300);
+        });
+    }
+
+    const res = await fetch(`${API_BASE}/notes/completed`, {
+        headers: getAuthHeaders(),
+    });
+
+    if (res.status === 401) throw new Error("Unauthorized");
+    if (!res.ok) throw new Error("Lấy danh sách notes đã hoàn thành thất bại");
 
     return res.json();
 }

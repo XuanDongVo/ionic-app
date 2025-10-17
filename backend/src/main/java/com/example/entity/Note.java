@@ -1,6 +1,7 @@
 package com.example.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -71,7 +72,7 @@ public class Note {
     @OneToMany(mappedBy = "parentNote", cascade = CascadeType.ALL)
     private Set<Note> subNotes = new HashSet<>();
 
-    @Column(nullable = false)
+    @Column(name = "is_completed")
     private boolean isCompleted = false;
 
     // --- CÁC MỐI QUAN HỆ KHÁC ---

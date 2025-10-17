@@ -34,11 +34,11 @@ const NoteCard: React.FC<NoteCardProps> = ({
 }) => (
   <div className="note-wrapper">
     <IonCard
-      className="note-card ion-activatable"
+      className={`note-card ion-activatable ${note.isCompleted ? 'completed' : ''}`}
       style={{
         backgroundColor: note.color || '#ffffff',
         minHeight: '150px',
-        opacity: note.completed ? 0.6 : 1,
+        opacity: note.isCompleted ? 0.6 : 1,
         borderLeft: note.isPinned ? '4px solid var(--ion-color-warning)' : 'none',
       }}
     >
@@ -46,7 +46,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
         <div className="note-header">
           {onToggleStatus && (
             <IonCheckbox
-              checked={note.completed}
+              checked={note.isCompleted}
               onIonChange={() => onToggleStatus(note.id)}
               className="note-checkbox"
             />
@@ -57,7 +57,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
             style={{
               cursor: 'pointer',
               flex: 1,
-              textDecoration: note.completed ? 'line-through' : 'none'
+              textDecoration: note.isCompleted ? 'line-through' : 'none'
             }}
           >
             {note.title}
