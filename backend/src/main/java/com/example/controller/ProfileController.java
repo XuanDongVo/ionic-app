@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.dto.response.ApiResponse;
 import com.example.entity.User;
 import com.example.repository.UserRepository;
@@ -25,11 +27,13 @@ import java.util.Optional;
 public class ProfileController {
 
     private final UserRepository userRepository;
+    private final Cloudinary cloudinary;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public ProfileController(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
+    public ProfileController(UserRepository userRepository, Cloudinary cloudinary, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.cloudinary = cloudinary;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
     }
@@ -166,42 +170,32 @@ public class ProfileController {
                         .body(ApiResponse.error("File size must be less than 10MB"));
             }
 
-            // Tạo thư mục nếu chưa có
-            Path uploadDir = Paths.get("uploads/profile");
-            Files.createDirectories(uploadDir);
-
-            // Tạo tên file unique và an toàn
-            String originalFilename = file.getOriginalFilename();
-            if (originalFilename == null) {
-                originalFilename = "avatar.jpg";
-            }
-            
-            String fileExtension = "";
-            int dotIndex = originalFilename.lastIndexOf('.');
-            if (dotIndex > 0) {
-                fileExtension = originalFilename.substring(dotIndex);
-            }
-            
-            String filename = System.currentTimeMillis() + "_" + userId + fileExtension;
-            Path targetPath = uploadDir.resolve(filename);
-            
-            // Xóa file cũ nếu có
             User user = userOpt.get();
-            if (user.getProfileImage() != null) {
+            
+            // Xóa ảnh cũ từ Cloudinary nếu có
+            if (user.getProfileImage() != null && user.getProfileImage().contains("cloudinary.com")) {
                 try {
-                    String oldImagePath = user.getProfileImage().replace("/uploads/profile/", "");
-                    Path oldFile = uploadDir.resolve(oldImagePath);
-                    Files.deleteIfExists(oldFile);
+                    // Extract public_id from Cloudinary URL
+                    String[] urlParts = user.getProfileImage().split("/");
+                    String publicId = urlParts[urlParts.length - 1].split("\\.")[0];
+                    cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
                 } catch (Exception e) {
                     // Ignore errors when deleting old file
+                    System.out.println("Failed to delete old image: " + e.getMessage());
                 }
             }
             
-            // Lưu file mới
-            Files.copy(file.getInputStream(), targetPath);
+            // Upload ảnh mới lên Cloudinary
+            Map<String, Object> uploadParams = new HashMap<>();
+            uploadParams.put("folder", "profile_images");
+            uploadParams.put("public_id", "user_" + userId + "_" + System.currentTimeMillis());
+            uploadParams.put("overwrite", true);
+            uploadParams.put("resource_type", "image");
+            
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), uploadParams);
+            String imageUrl = (String) uploadResult.get("secure_url");
 
             // Cập nhật user
-            String imageUrl = "/uploads/profile/" + filename;
             user.setProfileImage(imageUrl);
             userRepository.save(user);
 
