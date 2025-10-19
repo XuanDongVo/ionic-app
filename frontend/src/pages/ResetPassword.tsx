@@ -14,12 +14,6 @@ const ResetPassword: React.FC = () => {
 
     const email = localStorage.getItem("resetEmail");
 
-    if (!email) {
-      alert("Vui lòng nhập đầy đủ thông tin email được dùng để đăng kí");
-      history.push("/forgot-password");
-      return;
-    }
-
     if (!password || !confirmPassword) {
       alert("Vui lòng nhập mậT khẩu");
       return;

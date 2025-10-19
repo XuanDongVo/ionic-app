@@ -23,5 +23,11 @@ public class AuthResponse {
         this.username = username;
         this.email = email;
     }
+
+    public AuthResponse(Long userId, String username, String email) {
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+    }
 }
 

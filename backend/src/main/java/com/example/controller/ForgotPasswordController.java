@@ -16,9 +16,6 @@ public class ForgotPasswordController {
 
     private final ForgotPasswordService forgotPasswordService;
 
-    /**
-     * Bước 1: Người dùng gửi email để nhận mã OTP
-     */
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<String>> sendOtp(@RequestBody EmailRequest request) {
         try {
@@ -29,9 +26,6 @@ public class ForgotPasswordController {
         }
     }
 
-    /**
-     * Bước 2: Người dùng xác nhận OTP và đặt lại mật khẩu mới
-     */
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<String>> resetPassword(@RequestBody ResetPasswordRequest request) {
         try {
@@ -59,9 +53,7 @@ public class ForgotPasswordController {
         }
     }
 
-    /**
-     * Bước 2: Xác thực mã OTP
-     */
+
     @PostMapping("/verify-otp")
     public ResponseEntity<ApiResponse<String>> verifyOtp(@RequestBody VerifyPasswordRequest request) {
         try {
