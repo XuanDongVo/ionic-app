@@ -82,5 +82,18 @@ public class AuthService {
                 .updatedAt(user.getUpdatedAt())
                 .build();
     }
+
+    public UserResponse getCurrentUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("User không tồn tại"));
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
+    }
 }
 

@@ -6,12 +6,12 @@ import com.example.dto.response.ApiResponse;
 import com.example.dto.response.AuthResponse;
 import com.example.dto.response.UserResponse;
 import com.example.service.AuthService;
+import com.example.util.AuthUtils;
+import com.example.util.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,9 +37,8 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserResponse response = authService.getCurrentUser(username);
+        Long userId = AuthUtils.getCurrentUserId();
+        UserResponse response = authService.getCurrentUserById(userId);
         return ResponseEntity.ok(ApiResponse.success("Lấy thông tin user thành công", response));
     }
 }
