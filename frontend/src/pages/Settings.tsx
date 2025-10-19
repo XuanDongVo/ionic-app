@@ -67,9 +67,9 @@ const Settings: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/home" text="Back" />
+            <IonBackButton defaultHref="/home" text="Trở về" />
           </IonButtons>
-          <IonTitle>Settings</IonTitle>
+          <IonTitle>Cài đặt</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -84,10 +84,10 @@ const Settings: React.FC = () => {
               )}
             </IonAvatar>
             <div>
-              <div className="settings-name">{loading ? 'Loading...' : (username || 'User')}</div>
+               <div className="settings-name">{loading ? 'Đang tải...' : (username || 'Người dùng')}</div>
               <div className="settings-email">
                 <IonIcon icon={mailOutline} />
-                <span>{loading ? 'Loading...' : email}</span>
+                <span>{loading ? 'Đang tải...' : email}</span>
               </div>
             </div>
           </div>
@@ -96,13 +96,13 @@ const Settings: React.FC = () => {
             <IonRouterLink routerLink="/profile/edit" style={{ textDecoration: 'none' }}>
               <IonButton className="edit-outline-btn" expand="block" fill="outline">
                 <IonIcon icon={createOutline} slot="start" />
-                Edit Profile
+                 Chỉnh sửa hồ sơ
               </IonButton>
             </IonRouterLink>
           </div>
         </div>
 
-        <div className="section-label">APP SETTINGS</div>
+        <div className="section-label">CÀI ĐẶT ỨNG DỤNG</div>
 
         <IonList inset className="settings-list">
           <IonItem button detail={true} routerLink="/dev-tools" color="warning">
@@ -115,19 +115,19 @@ const Settings: React.FC = () => {
 
           <IonItem button detail={true} routerLink="/profile/change-password">
             <IonIcon icon={lockClosedOutline} slot="start" />
-            <IonLabel>Change Password</IonLabel>
+            <IonLabel>Đổi mật khẩu</IonLabel>
           </IonItem>
 
           <IonItem button={false} detail={false}>
             <IonIcon icon={textOutline} slot="start" />
-            <IonLabel>Text Size</IonLabel>
-            <IonNote slot="end">Medium</IonNote>
+            <IonLabel>Cỡ chữ</IonLabel>
+            <IonNote slot="end">Trung bình</IonNote>
           </IonItem>
 
           <IonItem button={false} detail={false}>
             <IonIcon icon={notificationsOutline} slot="start" />
-            <IonLabel>Notifications</IonLabel>
-            <IonNote slot="end">All active</IonNote>
+            <IonLabel>Thông báo</IonLabel>
+            <IonNote slot="end">Tất cả hoạt động</IonNote>
           </IonItem>
         </IonList>
 
@@ -143,7 +143,7 @@ const Settings: React.FC = () => {
             }}
           >
             <IonIcon icon={logOutOutline} slot="start" />
-            <IonLabel>Log Out</IonLabel>
+            <IonLabel>Đăng xuất</IonLabel>
           </IonItem>
         </IonList>
 
