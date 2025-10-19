@@ -12,11 +12,6 @@ const VerifyEmail: React.FC = () => {
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code || !email) {
-      alert("Please enter the verification code and email.");
-      return;
-    }
-
     try {
       const res = await fetch("http://localhost:8080/api/auth/verify-otp", {
         method: "POST",
@@ -27,17 +22,13 @@ const VerifyEmail: React.FC = () => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // alert("Verification successful!");
-        // localStorage.setItem("resetEmail", email);
-        // localStorage.setItem("resetOtp", otp);
-
         history.push("/reset-password");
       } else {
-        alert(data.message || "Verification failed. Please try again.");
+        alert(data.message || "Xác thực thất bại.");
       }
     } catch (error) {
-      console.error("Error verifying code:", error);
-      alert("Something went wrong while verifying code.");
+      console.error("Lỗi xác thực:", error);
+      alert("Lỗi");
     }
   };
 

@@ -139,7 +139,7 @@ const Settings: React.FC = () => {
             color="danger" 
             onClick={() => {
               localStorage.removeItem('token');
-              history.push('/login');
+              window.location.href = '/login';
             }}
           >
             <IonIcon icon={logOutOutline} slot="start" />

@@ -24,7 +24,6 @@ const Login: React.FC = () => {
 
             if (response.data.success) {
                 localStorage.setItem("token", response.data.data.token);
-                // alert("Đăng nhập thành công!");
                 history.push("/home"); 
             } else {
                 setError(response.data.message);

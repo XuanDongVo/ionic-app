@@ -34,9 +34,6 @@ const Register: React.FC = () => {
         email,
         password,
       });
-
-     
-
       if (response.data.success) {
         history.push('/login');
       } else {
