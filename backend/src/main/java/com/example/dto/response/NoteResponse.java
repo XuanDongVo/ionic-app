@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,11 +26,12 @@ public class NoteResponse {
     private Long notebookId;
     private String notebookName;
     private Long parentNoteId;
-    private Set<TagResponse> tags;
+    private List<TagResponse> tags;
     private int subNotesCount;
     private int attachmentsCount;
     private ReminderResponse reminder;
     private boolean isCompleted;
+    private List<Long> tagIds;
 
 }
 

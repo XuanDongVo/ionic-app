@@ -3,20 +3,23 @@ package com.example.service;
 import com.example.dto.request.NoteRequest;
 import com.example.dto.request.UpdateNoteRequest;
 import com.example.dto.response.NoteResponse;
-import com.example.dto.response.ReminderResponse;
-import com.example.dto.response.TagResponse;
 import com.example.entity.Note;
 import com.example.entity.Notebook;
 import com.example.entity.Tag;
 import com.example.entity.User;
 import com.example.exception.BadRequestException;
 import com.example.exception.ResourceNotFoundException;
+import com.example.mapper.NoteMapper;
 import com.example.repository.NoteRepository;
+import com.example.repository.NotebookRepository;
+import com.example.repository.TagRepository;
+import com.example.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,74 +30,56 @@ import java.util.stream.Collectors;
 public class NoteService {
 
     private final NoteRepository noteRepository;
-    // Giả định có các service khác để lấy User, Notebook, Tag
-    // private final UserService userService;
-    // private final NotebookService notebookService;
-    // private final TagService tagService;
+    private final NotebookRepository notebookRepository;
+    private final TagRepository tagRepository;
+    private final UserRepository userRepository;
+    private final NoteMapper noteMapper;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional(readOnly = true)
     public List<NoteResponse> getAllNotesByUser(Long userId) {
         List<Note> notes = noteRepository.findByUserId(userId);
-        return notes.stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+        return noteMapper.toResponseList(notes);
     }
 
     @Transactional(readOnly = true)
     public NoteResponse getNoteById(Long noteId, Long userId) {
         Note note = noteRepository.findByIdAndUserId(noteId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Note không tồn tại hoặc bạn không có quyền truy cập"));
-        return convertToResponse(note);
+        return noteMapper.toResponse(note);
     }
 
     @Transactional
     public NoteResponse createNote(NoteRequest request, Long userId) {
-        // Validation
-        if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
-            throw new BadRequestException("Title không được để trống");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại"));
 
-        Note note = new Note();
-        note.setTitle(request.getTitle());
-        note.setContent(request.getContent());
-        note.setColor(request.getColor());
-        note.setPinned(request.getIsPinned() != null ? request.getIsPinned() : false);
-        note.setArchived(request.getIsArchived() != null ? request.getIsArchived() : false);
-
-        // Set User - Trong thực tế cần userService.findById(userId)
-        User user = new User();
-        user.setId(userId);
+        Note note = noteMapper.toEntity(request);
         note.setUser(user);
 
-        // Set Notebook nếu có
         if (request.getNotebookId() != null) {
-            // Trong thực tế: notebookService.findByIdAndUserId(request.getNotebookId(), userId)
-            Notebook notebook = new Notebook();
-            notebook.setId(request.getNotebookId());
+            Notebook notebook = notebookRepository.findByIdAndUserId(request.getNotebookId(), userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Notebook không tồn tại hoặc không thuộc về bạn"));
             note.setNotebook(notebook);
         }
 
-        // Set Parent Note nếu có
         if (request.getParentNoteId() != null) {
             Note parentNote = noteRepository.findByIdAndUserId(request.getParentNoteId(), userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Parent note không tồn tại"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Parent note không tồn tại hoặc không thuộc về bạn"));
             note.setParentNote(parentNote);
         }
 
-        // Set Tags nếu có
         if (request.getTagIds() != null && !request.getTagIds().isEmpty()) {
-            Set<Tag> tags = new HashSet<>();
-            for (Long tagId : request.getTagIds()) {
-                // Trong thực tế: tagService.findByIdAndUserId(tagId, userId)
-                Tag tag = new Tag();
-                tag.setId(tagId);
-                tags.add(tag);
+            List<Tag> tags = tagRepository.findAllByIdInAndUserId(request.getTagIds(), userId);
+            if (tags.size() != request.getTagIds().size()) {
+                throw new BadRequestException("Một hoặc nhiều tag không tồn tại hoặc không thuộc về bạn");
             }
-            note.setTags(tags);
+            note.setTags(new HashSet<>(tags));
         }
 
-        Note savedNote = noteRepository.save(note);
-        return convertToResponse(savedNote);
+        Note saved = noteRepository.save(note);
+        return noteMapper.toResponse(saved);
     }
 
     @Transactional
@@ -102,34 +87,13 @@ public class NoteService {
         Note note = noteRepository.findByIdAndUserId(noteId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Note không tồn tại hoặc bạn không có quyền truy cập"));
 
-        // Update các trường nếu có trong request
-        if (request.getTitle() != null) {
-            if (request.getTitle().trim().isEmpty()) {
-                throw new BadRequestException("Title không được để trống");
-            }
-            note.setTitle(request.getTitle());
-        }
+        // Sử dụng MapStruct để cập nhật các trường cơ bản từ request
+        noteMapper.updateEntityFromRequest(request, note);
 
-        if (request.getContent() != null) {
-            note.setContent(request.getContent());
-        }
-
-        if (request.getColor() != null) {
-            note.setColor(request.getColor());
-        }
-
-        if (request.getIsPinned() != null) {
-            note.setPinned(request.getIsPinned());
-        }
-
-        if (request.getIsArchived() != null) {
-            note.setArchived(request.getIsArchived());
-        }
-
+        // Xử lý các mối quan hệ một cách an toàn
         if (request.getNotebookId() != null) {
-            // Trong thực tế: notebookService.findByIdAndUserId(request.getNotebookId(), userId)
-            Notebook notebook = new Notebook();
-            notebook.setId(request.getNotebookId());
+            Notebook notebook = notebookRepository.findByIdAndUserId(request.getNotebookId(), userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Notebook không tồn tại hoặc không thuộc về bạn"));
             note.setNotebook(notebook);
         }
 
@@ -138,22 +102,27 @@ public class NoteService {
                 throw new BadRequestException("Note không thể là parent của chính nó");
             }
             Note parentNote = noteRepository.findByIdAndUserId(request.getParentNoteId(), userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Parent note không tồn tại"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Parent note không tồn tại hoặc không thuộc về bạn"));
             note.setParentNote(parentNote);
         }
 
         if (request.getTagIds() != null) {
-            Set<Tag> tags = new HashSet<>();
-            for (Long tagId : request.getTagIds()) {
-                Tag tag = new Tag();
-                tag.setId(tagId);
-                tags.add(tag);
+            if (request.getTagIds().isEmpty()) {
+                note.getTags().clear();
+            } else {
+                List<Tag> tags = tagRepository.findAllByIdInAndUserId(request.getTagIds(), userId);
+                if (tags.size() != request.getTagIds().size()) {
+                    throw new BadRequestException("Một hoặc nhiều tag không tồn tại hoặc không thuộc về bạn");
+                }
+                note.setTags(new HashSet<>(tags));
             }
-            note.setTags(tags);
         }
 
-        Note updatedNote = noteRepository.save(note);
-        return convertToResponse(updatedNote);
+        noteRepository.save(note);
+        Note updatedNote = noteRepository.findByIdWithRelations(note.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không thể load note sau khi cập nhật"));
+
+        return noteMapper.toResponse(updatedNote);
     }
 
     @Transactional
@@ -167,7 +136,7 @@ public class NoteService {
     public List<NoteResponse> getPinnedNotes(Long userId) {
         List<Note> notes = noteRepository.findByUserIdAndIsPinnedTrue(userId);
         return notes.stream()
-                .map(this::convertToResponse)
+                .map(noteMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -175,16 +144,16 @@ public class NoteService {
     public List<NoteResponse> getArchivedNotes(Long userId) {
         List<Note> notes = noteRepository.findByUserIdAndIsArchivedTrue(userId);
         return notes.stream()
-                .map(this::convertToResponse)
+                .map(noteMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<NoteResponse> getCompletedNotes(Long userId) {
         List<Note> notes = noteRepository.findByUserIdAndIsCompletedTrue(userId);
-        // Sử dụng lại hàm convertToResponse để chuyển đổi sang DTO
+        // Sử dụng lại mapstruct mapper để chuyển đổi sang DTO
         return notes.stream()
-                .map(this::convertToResponse)
+                .map(noteMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -192,7 +161,7 @@ public class NoteService {
     public List<NoteResponse> getNotesByNotebook(Long notebookId, Long userId) {
         List<Note> notes = noteRepository.findByNotebookIdAndUserId(notebookId, userId);
         return notes.stream()
-                .map(this::convertToResponse)
+                .map(noteMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -200,7 +169,7 @@ public class NoteService {
     public List<NoteResponse> getNotesByTag(Long tagId, Long userId) {
         List<Note> notes = noteRepository.findByTagIdAndUserId(tagId, userId);
         return notes.stream()
-                .map(this::convertToResponse)
+                .map(noteMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -208,7 +177,7 @@ public class NoteService {
     public List<NoteResponse> searchNotes(String keyword, Long userId) {
         List<Note> notes = noteRepository.searchNotes(userId, keyword);
         return notes.stream()
-                .map(this::convertToResponse)
+                .map(noteMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -220,7 +189,7 @@ public class NoteService {
 
         List<Note> subNotes = noteRepository.findByParentNoteIdAndUserId(parentNoteId, userId);
         return subNotes.stream()
-                .map(this::convertToResponse)
+                .map(noteMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -230,7 +199,7 @@ public class NoteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Note không tồn tại hoặc bạn không có quyền truy cập"));
         note.setPinned(!note.isPinned());
         Note updatedNote = noteRepository.save(note);
-        return convertToResponse(updatedNote);
+        return noteMapper.toResponse(updatedNote);
     }
 
     @Transactional
@@ -239,77 +208,10 @@ public class NoteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Note không tồn tại hoặc bạn không có quyền truy cập"));
         note.setArchived(!note.isArchived());
         Note updatedNote = noteRepository.save(note);
-        return convertToResponse(updatedNote);
+        return noteMapper.toResponse(updatedNote);
     }
 
-    // Helper method để convert Entity sang Response DTO
-    private NoteResponse convertToResponse(Note note) {
-        NoteResponse response = NoteResponse.builder()
-                .id(note.getId())
-                .title(note.getTitle())
-                .content(note.getContent())
-                .color(note.getColor())
-                .isPinned(note.isPinned())
-                .isArchived(note.isArchived())
-                .isCompleted(note.isCompleted())
-                .createdAt(note.getCreatedAt())
-                .updatedAt(note.getUpdatedAt())
-                .build();
-
-        // Set User info
-        if (note.getUser() != null) {
-            response.setUserId(note.getUser().getId());
-            response.setUsername(note.getUser().getUsername());
-        }
-
-        // Set Notebook info
-        if (note.getNotebook() != null) {
-            response.setNotebookId(note.getNotebook().getId());
-            response.setNotebookName(note.getNotebook().getName());
-        }
-
-        // Set Parent Note info
-        if (note.getParentNote() != null) {
-            response.setParentNoteId(note.getParentNote().getId());
-        }
-
-        // Set Tags
-        if (note.getTags() != null && !note.getTags().isEmpty()) {
-            Set<TagResponse> tagResponses = note.getTags().stream()
-                    .map(tag -> TagResponse.builder()
-                            .id(tag.getId())
-                            .name(tag.getName())
-                            .color(tag.getColor())
-                            .build())
-                    .collect(Collectors.toSet());
-            response.setTags(tagResponses);
-        }
-
-        // Set SubNotes count
-        if (note.getSubNotes() != null) {
-            response.setSubNotesCount(note.getSubNotes().size());
-        }
-
-        // Set Attachments count
-        if (note.getAttachments() != null) {
-            response.setAttachmentsCount(note.getAttachments().size());
-        }
-
-        // Set Reminder
-        if (note.getReminder() != null) {
-            ReminderResponse reminderResponse = ReminderResponse.builder()
-                    .id(note.getReminder().getId())
-                    .reminderTime(note.getReminder().getReminderTime())
-                    .repeatType(note.getReminder().getRepeatType())
-                    .isCompleted(note.getReminder().isCompleted())
-                    .build();
-            response.setReminder(reminderResponse);
-        }
-
-        return response;
-    }
-
-    // update stause
+    // update status
     @Transactional
     public NoteResponse updateStatus(Long noteId, Long userId) {
         Note note = noteRepository.findByIdAndUserId(noteId, userId)
@@ -317,46 +219,7 @@ public class NoteService {
 
         note.setCompleted(!note.isCompleted());
         Note updatedNote = noteRepository.save(note);
-        return convertToResponse(updatedNote);
-
-//        return NoteResponse.builder()
-//                .id(note.getId())
-//                .title(note.getTitle())
-//                .content(note.getContent())
-//                .color(note.getColor())
-//                .isPinned(note.isPinned())
-//                .isArchived(note.isArchived())
-//                .isCompleted(note.isCompleted())
-//                .createdAt(note.getCreatedAt())
-//                .updatedAt(note.getUpdatedAt())
-//                .userId(note.getUser() != null ? note.getUser().getId() : null)
-//                .username(note.getUser() != null ? note.getUser().getUsername() : null)
-//                .notebookId(note.getNotebook() != null ? note.getNotebook().getId() : null)
-//                .notebookName(note.getNotebook() != null ? note.getNotebook().getName() : null)
-//                .parentNoteId(note.getParentNote() != null ? note.getParentNote().getId() : null)
-//                .subNotesCount(note.getSubNotes() != null ? note.getSubNotes().size() : 0)
-//                .attachmentsCount(note.getAttachments() != null ? note.getAttachments().size() : 0)
-//
-//                .reminder(note.getReminder() != null
-//                        ? ReminderResponse.builder()
-//                        .id(note.getReminder().getId())
-//                        .reminderTime(note.getReminder().getReminderTime())
-//                        .repeatType(note.getReminder().getRepeatType())
-//                        .isCompleted(note.getReminder().isCompleted())
-//                        .build()
-//                        : null)
-//                .tags(note.getTags() != null
-//                        ? note.getTags().stream()
-//                        .map(tag -> TagResponse.builder()
-//                                .id(tag.getId())
-//                                .name(tag.getName())
-//                                .color(tag.getColor())
-//                                .build())
-//                        .collect(Collectors.toSet())
-//                        : null)
-//                .build();
+        return noteMapper.toResponse(updatedNote);
     }
 
-
 }
-

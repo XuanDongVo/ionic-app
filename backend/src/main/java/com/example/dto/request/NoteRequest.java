@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,7 +31,7 @@ public class NoteRequest {
 
     private Long parentNoteId;
 
-    private Set<Long> tagIds;
+    private List<Long> tagIds;
 
     private Boolean isCompleted;
 

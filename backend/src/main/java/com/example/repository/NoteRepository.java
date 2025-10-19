@@ -31,4 +31,15 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     List<Note> searchNotes(@Param("userId") Long userId, @Param("keyword") String keyword);
 
     List<Note> findByParentNoteIdAndUserId(Long parentNoteId, Long userId);
+
+    @Query("""
+                SELECT n FROM Note n
+                LEFT JOIN FETCH n.user
+                LEFT JOIN FETCH n.notebook
+                LEFT JOIN FETCH n.tags
+                LEFT JOIN FETCH n.reminder
+                WHERE n.id = :id
+    """)
+    Optional<Note> findByIdWithRelations(@Param("id") Long id);
+
 }

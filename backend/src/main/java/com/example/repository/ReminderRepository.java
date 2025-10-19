@@ -19,5 +19,9 @@ public interface ReminderRepository extends JpaRepository<Reminder, Long> {
 
     @Query("SELECT r FROM Reminder r WHERE r.reminderTime <= :time AND r.isActive = true AND r.isCompleted = false")
     List<Reminder> findUpcomingReminders(@Param("time") LocalDateTime time);
+
+    Optional<Reminder> findByIdAndNoteUserId(Long id, Long userId);
+
+    List<Reminder> findByNoteUserId(Long userId);
 }
 

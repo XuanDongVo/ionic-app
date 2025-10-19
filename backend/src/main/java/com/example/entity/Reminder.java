@@ -8,29 +8,31 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reminders")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = "note")
+@Builder
 public class Reminder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "reminder_time", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime reminderTime;
 
-    @Column(name = "repeat_type", length = 20)
-    private String repeatType; // DAILY, WEEKLY, MONTHLY, etc.
+    @Column(length = 20)
+    private String repeatType;
 
-    @Column(name = "is_completed")
     private boolean isCompleted = false;
-
-    @Column(name = "is_active")
     private boolean isActive = true;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -5,7 +5,7 @@ import { ApiService } from "../api";
 export async function getNotebooks(): Promise<Notebook[]> {
   try {
     const wrapper = await ApiService.get<ApiResponse<Notebook[]>>(
-      "/api/notebook"
+      "/api/notebooks"
     );
     return wrapper.data;
   } catch (err) {
