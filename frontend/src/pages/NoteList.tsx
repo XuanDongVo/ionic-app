@@ -35,7 +35,7 @@ const NoteList: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastColor, setToastColor] = useState<'success' | 'danger'>('success');
-  const [selectedSegment, setSelectedSegment] = useState<'all' | 'pinned' | 'archived' | 'completed'>('all');
+  const [selectedSegment, setSelectedSegment] = useState<'pinned' | 'archived' | 'completed'>('pinned');
 
   useIonViewWillEnter(() => {
     console.log(`NoteList view will enter, loading notes for: ${selectedSegment}`);
@@ -52,28 +52,22 @@ const NoteList: React.FC = () => {
       let response;
       let fetchedNotes: Note[] = [];
 
-      switch (selectedSegment) {
-        case 'pinned':
-          response = await getPinnedNotes();
-          fetchedNotes = response.data || [];
-          break;
-        case 'archived':
-          response = await getArchivedNotes();
-          fetchedNotes = response.data || [];
-          break;
-        case 'completed': 
-          response = await getCompletedNotes();
-          fetchedNotes = response.data || [];
-          break;
-        default: {
-          response = await getAllNotes();
-          const allNotes = response.data || [];
-          // Lọc ra các note chưa hoàn thành cho tab "Tất cả"
-          fetchedNotes = allNotes.filter((note: Note) => !note.isCompleted);
-          break;
+        switch (selectedSegment) {
+            case 'pinned':
+                response = await getPinnedNotes();
+                fetchedNotes = response.data || [];
+                break;
+            case 'archived':
+                response = await getArchivedNotes();
+                fetchedNotes = response.data || [];
+                break;
+            case 'completed':
+                response = await getCompletedNotes();
+                fetchedNotes = response.data || [];
+                break;
+            default:
+                fetchedNotes = [];
         }
-      }
-
       console.log('📋 Notes loaded:', response);
       // setNotes(response.data || []);
       setNotes(fetchedNotes);
@@ -192,9 +186,6 @@ const NoteList: React.FC = () => {
         </IonToolbar>
         <IonToolbar>
           <IonSegment value={selectedSegment} onIonChange={(e) => setSelectedSegment(e.detail.value as any)}>
-            <IonSegmentButton value="all">
-              <IonLabel>Tất cả</IonLabel>
-            </IonSegmentButton>
             <IonSegmentButton value="pinned">
               <IonLabel>Đã ghim</IonLabel>
             </IonSegmentButton>
