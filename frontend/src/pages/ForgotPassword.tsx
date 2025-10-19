@@ -16,7 +16,7 @@ const ForgotPassword: React.FC = () => {
     setError("");
 
     if (!email) {
-      setError("⚠️ Please enter your email address.");
+      setError("Vui lòng nhập email");
       return;
     }
 
@@ -29,16 +29,15 @@ const ForgotPassword: React.FC = () => {
 
       if (response.data.success) {
         localStorage.setItem("resetEmail", email);
-        setMessage("✅ Verification code has been sent to your email.");
-        // Chờ 1–2s rồi chuyển sang trang nhập mã
+        setMessage("Mã xác thực đã được chuyển vui lòng kiểm tra trong email");
         setTimeout(() => {
           history.push("/verify-email");
-        }, 1500);
+        }, 1000);
       } else {
-        setError(response.data.message || "❌ Failed to send reset code.");
+        setError(response.data.message || "Lỗi gửi mã");
       }
     } catch (err: any) {
-      setError("❌ Error sending email. Please check your address or try again later.");
+      setError("Lỗi gửi mã, Vui lòng kiểm tra lại email và thử lại sau");
     } finally {
       setLoading(false);
     }
@@ -47,17 +46,17 @@ const ForgotPassword: React.FC = () => {
   return (
     <div className="forgot-container">
       <button className="back-link" onClick={() => history.push("/login")}>
-        ← Back to Login
+        ← Quay lại trang đăng nhập
       </button>
 
-      <h1 className="forgot-title">Forgot Password</h1>
+      <h1 className="forgot-title">Quên mật khẩu</h1>
       <p className="forgot-subtitle">
-        Insert your email address to receive a code for creating a new password
+        Nhập email của bạn để xác thực và tiến hành đổi mật khẩu
       </p>
 
       <form className="forgot-form" onSubmit={handleSendCode}>
         <label htmlFor="email" className="forgot-label">
-          Email Address
+          Địa chỉ Email
         </label>
         <input
           id="email"
@@ -72,7 +71,7 @@ const ForgotPassword: React.FC = () => {
         {message && <p className="success-text">{message}</p>}
 
         <button type="submit" className="forgot-button" disabled={loading}>
-          {loading ? "Sending..." : "Send Code"}
+          {loading ? "Sending..." : "Gửi mã"}
         </button>
       </form>
     </div>

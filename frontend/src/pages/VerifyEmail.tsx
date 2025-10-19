@@ -67,23 +67,23 @@ const VerifyEmail: React.FC = () => {
   return (
     <div className="verify-container">
       <button className="back-link" onClick={() => history.push("/login")}>
-        ← Back to Login
+        ← Quay trở lại trang đăng nhập
       </button>
 
-      <h1 className="verify-title">Verify Email</h1>
+      <h1 className="verify-title">Xác thực Email</h1>
       <p className="verify-subtitle">
-        Please enter the verification code sent to your email
+        Vui lòng nhập mã xác thực đƯợc gửi từ email của bạn
       </p>
 
       <form className="verify-form" onSubmit={handleVerify}>
         <label htmlFor="code" className="verify-label">
-          Verification Code
+          Mã xác thực
         </label>
         <input
           id="code"
           type="text"
           className="verify-input"
-          placeholder="Enter 6-digit code"
+          placeholder="Nhập mã 6 số"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           maxLength={6}
@@ -92,14 +92,14 @@ const VerifyEmail: React.FC = () => {
         {error && <p className="error-text">{error}</p>}
 
         <button type="submit" className="verify-button" disabled={loading}>
-          {loading ? "Verifying..." : "Verify"}
+          {loading ? "Verifying..." : "Xác thực"}
         </button>
       </form>
 
       <div className="verify-resend">
-        Didn’t get the code?{" "}
+        Bạn không nhận được mã?{" "}
         <span className="resend-link" onClick={handleResend}>
-          Resend
+          Gửi lại
         </span>
 
       </div>
