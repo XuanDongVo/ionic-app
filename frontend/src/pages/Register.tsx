@@ -18,12 +18,12 @@ const Register: React.FC = () => {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match!');
+      setError('Mật khẩu không khớp');
       return;
     }
 
-     if(password.length<8){
-        setError('Password Length is bigger or equal 8');
+     if(password.length<6){
+        setError('Độ dài mật khẩu phải lớn hơn 6');
         return;
       }
 
@@ -38,13 +38,12 @@ const Register: React.FC = () => {
      
 
       if (response.data.success) {
-        // alert('Đăng ký thành công!');
         history.push('/login');
       } else {
         setError(response.data.message || 'Register Fail!');
       }
     } catch (err: any) {
-      setError('Register Fail!! Again please.');
+      setError('Đăng kí thất bại. Vui lòng thử lại!');
     } finally {
       setLoading(false);
     }
@@ -53,14 +52,14 @@ const Register: React.FC = () => {
   return (
     <div className="register-container">
       <div className="register-box">
-        <Link to="/login">← Back to Login</Link>
+        <Link to="/login">← Quay lại trang đăng nhập</Link>
 
-        <h1 className="register-title">Register</h1>
-        <p className="register-subtitle">And start taking notes</p>
+        <h1 className="register-title">Đăng kí</h1>
+        <p className="register-subtitle">Và bắt đầu lên kế hoạch</p>
 
         <form onSubmit={handleRegister}>
           <div className="form-group">
-            <label>Full Name</label>
+            <label>Tên</label>
             <input
               type="text"
               placeholder="Example: John Doe"
@@ -71,7 +70,7 @@ const Register: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label>Email Address</label>
+            <label>Địa chỉ Email</label>
             <input
               type="email"
               placeholder="Example: johndoe@gmail.com"
@@ -82,7 +81,7 @@ const Register: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label>Password</label>
+            <label>Mật khẩu</label>
             <input
               type="password"
               placeholder="********"
@@ -93,7 +92,7 @@ const Register: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label>Retype Password</label>
+            <label>Xác nhận lại mật khẩu</label>
             <input
               type="password"
               placeholder="********"
@@ -106,14 +105,14 @@ const Register: React.FC = () => {
           {error && <p className="error-text">{error}</p>}
 
           <button className="register-btn" type="submit" disabled={loading}>
-            {loading ? 'Registering...' : <>Register <span className="arrow">→</span></>}
+            {loading ? 'Registering...' : <>Đăng kí <span className="arrow">→</span></>}
           </button>
         </form>
 
         <p className="login-text">
-          Already have an account?{' '}
+          Bạn đã có tài khoản?{' '}
           <a href="#" onClick={() => history.push('/login')}>
-            Login here
+            Hãy đăng nhập ở đây
           </a>
         </p>
       </div>

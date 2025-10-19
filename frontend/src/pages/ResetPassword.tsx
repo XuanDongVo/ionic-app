@@ -15,23 +15,23 @@ const ResetPassword: React.FC = () => {
     const email = localStorage.getItem("resetEmail");
 
     if (!email) {
-      alert("Missing verification data. Please verify your email again.");
+      alert("Vui lòng nhập đầy đủ thông tin email được dùng để đăng kí");
       history.push("/forgot-password");
       return;
     }
 
     if (!password || !confirmPassword) {
-      alert("Please fill in all fields");
+      alert("Vui lòng nhập mậT khẩu");
       return;
     }
 
-    if (password.length < 8) {
-      alert("Password must be at least 8 characters long");
+    if (password.length < 6) {
+      alert("Độ dài mật khẩu tối thiểu phải 6 kí tự");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      alert("Mật khẩu không trùng khớp");
       return;
     }
 
@@ -46,14 +46,14 @@ const ResetPassword: React.FC = () => {
       });
 
       if (response.data.success) {
-        alert("✅ Password reset successful! Please login again.");
+        alert("Mật khẩu đã được đổi thành công");
         localStorage.removeItem("resetEmail");
         history.push("/login");
       } else {
-        alert(response.data.message || "❌ Reset password failed!");
+        alert(response.data.message || " Đổi mậT khẩU thấT bại!");
       }
     } catch (error: any) {
-      console.error("Reset password error:", error);
+      console.error("Đổi mậT khẩU thấT bại:", error);
       if (error.response?.data?.message) {
         alert(error.response.data.message);
       } else {
@@ -66,16 +66,16 @@ const ResetPassword: React.FC = () => {
 
   return (
     <div className="reset-container">
-      <Link to="/login" className="back-link">← Back to Login</Link>
+      <Link to="/login" className="back-link">← Quay trở lại trang đăng nhập</Link>
 
-      <h1 className="reset-title">Create a New Password</h1>
+      <h1 className="reset-title">Tạo 1 mật khẩu mới</h1>
       <p className="reset-subtitle">
-        Your new password should be different from the previous one
+        Mật khẩu mới của bạn nên khác mật khẩu trước đó
       </p>
 
       <form className="reset-form" onSubmit={handleSubmit}>
         <label htmlFor="password" className="reset-label">
-          New Password
+          Mật khẩu mới
         </label>
         <input
           id="password"
@@ -86,11 +86,11 @@ const ResetPassword: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <small className="reset-hint">
-          Minimum 8 characters, use a mix of numbers and letters.
+          Tối thiểu là 6 kí tự.
         </small>
 
         <label htmlFor="confirmPassword" className="reset-label">
-          Retype New Password
+          Nhập lại mật khẩu mới
         </label>
         <input
           id="confirmPassword"
@@ -102,7 +102,7 @@ const ResetPassword: React.FC = () => {
         />
 
         <button type="submit" className="reset-button" disabled={loading}>
-          {loading ? "Creating..." : "Create Password"}
+          {loading ? "Creating..." : "Tạo mật khẩu"}
         </button>
       </form>
     </div>

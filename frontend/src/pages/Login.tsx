@@ -30,7 +30,7 @@ const Login: React.FC = () => {
                 setError(response.data.message);
             }
         } catch (err: any) {
-            setError("Login fail! Please check your input");
+            setError("Đăng nhập thất bại vui lòng kiểm tra lại email và mật khẩu");
         } finally {
             setLoading(false);
         }
@@ -39,12 +39,12 @@ const Login: React.FC = () => {
     return (
         <div className="login-container">
             <div className="login-box">
-                <h1 className="login-title">Let’s Login</h1>
-                <p className="login-subtitle">And notes your idea</p>
+                <h1 className="login-title">Hãy bắt đầu đăng nhập</h1>
+                <p className="login-subtitle">Và thực hiện những kế hoạch của bạn</p>
 
                 <form onSubmit={handleLogin}>
                     <div className="form-group">
-                        <label>Email Address</label>
+                        <label>Địa chỉ Email</label>
                         <input
                             type="email"
                             placeholder="Example: johndoe@gmail.com"
@@ -55,7 +55,7 @@ const Login: React.FC = () => {
                     </div>
 
                     <div className="form-group">
-                        <label>Password</label>
+                        <label>Mật khẩu</label>
                         <input
                             type="password"
                             placeholder="********"
@@ -66,27 +66,18 @@ const Login: React.FC = () => {
                     </div>
 
                     <Link to="/forgot-password" className="forgot-password">
-                        Forgot Password
+                        Quên mật khẩu
                     </Link>
 
                     {error && <p className="error-text">{error}</p>}
 
                     <button className="login-btn" type="submit" disabled={loading}>
-                        {loading ? "Logging in..." : <>Login <span className="arrow">→</span></>}
+                        {loading ? "Logging in..." : <>Đăng nhập <span className="arrow">→</span></>}
                     </button>
                 </form>
 
-                {/* <div className="divider">
-                    <span>Or</span>
-                </div> */}
-
-                {/* <button className="google-btn">
-                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
-                    Login with Google
-                </button> */}
-
                 <p className="register-text">
-                    Don’t have any account? <Link to="/register">Register here</Link>
+                    Nếu bạn chưa có tài khoản <Link to="/register">Hãy đăng kí ngay tại đây</Link>
                 </p>
             </div>
         </div>
