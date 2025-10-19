@@ -216,9 +216,9 @@ const ProfileEdit: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/settings" text="Settings" />
+            <IonBackButton defaultHref="/settings" text="Cài đặt" />
           </IonButtons>
-          <IonTitle>Edit Profile</IonTitle>
+          <IonTitle>Chỉnh sửa hồ sơ</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -252,22 +252,22 @@ const ProfileEdit: React.FC = () => {
 
             <IonList inset>
               <IonItem>
-                <IonLabel position="stacked">Full Name</IonLabel>
+                <IonLabel position="stacked">Họ và tên</IonLabel>
                 <IonInput value={username} onIonInput={(e) => setUsername(e.detail.value || '')} />
               </IonItem>
 
               <IonItem>
-                <IonLabel position="stacked">Email Address</IonLabel>
+                <IonLabel position="stacked">Địa chỉ email</IonLabel>
                 <IonInput value={email} onIonInput={(e) => setEmail(e.detail.value || '')} />
               </IonItem>
               <IonNote style={{ marginLeft: 16, marginTop: 6, display: 'block' }} color="medium">
-                Changing email may require re-login on the app.
+                Thay đổi email có thể yêu cầu đăng nhập lại trên ứng dụng.
               </IonNote>
             </IonList>
 
             <div style={{ padding: 16 }}>
               <IonButton expand="block" disabled={saving} onClick={onSave}>
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
               </IonButton>
             </div>
           </>

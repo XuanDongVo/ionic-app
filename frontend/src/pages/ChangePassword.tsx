@@ -26,17 +26,17 @@ const ChangePassword: React.FC = () => {
 
   const onSubmit = async () => {
     if (!current || !next || !confirm) {
-      alert('Please fill in all fields');
+      alert('Vui lòng điền đầy đủ các trường');
       return;
     }
 
     if (next !== confirm) {
-      alert('New passwords do not match');
+      alert('Mật khẩu mới không khớp');
       return;
     }
 
     if (next.length < 6) {
-      alert('Password must be at least 6 characters long');
+      alert('Mật khẩu phải có ít nhất 6 kí tự');
       return;
     }
 
@@ -47,14 +47,14 @@ const ChangePassword: React.FC = () => {
         newPassword: next,
         confirmPassword: confirm,
       });
-      alert('Password changed successfully!');
+      alert('Mật khẩu đã được đổi thành công!');
       setCurrent('');
       setNext('');
       setConfirm('');
       history.push('/settings');
     } catch (error: any) {
-      console.error('Failed to change password:', error);
-      alert(error.response?.data?.message || 'Failed to change password');
+      console.error('Đổi mật khẩu thất bại:', error);
+      alert(error.response?.data?.message || 'Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu hiện tại');
     } finally {
       setSaving(false);
     }
@@ -65,36 +65,36 @@ const ChangePassword: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/profile/edit" text="Back" />
+            <IonBackButton defaultHref="/profile/edit" text="Trở về" />
           </IonButtons>
-          <IonTitle>Change Password</IonTitle>
+          <IonTitle>Đổi mật khẩu</IonTitle>
         </IonToolbar>
       </IonHeader>
 
       <IonContent className="ion-padding">
-        <IonNote color="medium">Please input your current password first</IonNote>
+        <IonNote color="medium">Vui lòng nhập mật khẩu hiện tại trước</IonNote>
         <IonList inset>
           <IonItem>
-            <IonLabel position="stacked">Current Password</IonLabel>
+            <IonLabel position="stacked">Mật khẩu hiện tại</IonLabel>
             <IonInput type="password" value={current} onIonInput={(e) => setCurrent(e.detail.value || '')} />
           </IonItem>
         </IonList>
 
-        <IonNote color="medium" style={{ display: 'block', marginTop: 16 }}>Now, create your new password</IonNote>
+        <IonNote color="medium" style={{ display: 'block', marginTop: 16 }}>Bây giờ, tạo mật khẩu mới của bạn</IonNote>
         <IonList inset>
           <IonItem>
-            <IonLabel position="stacked">New Password</IonLabel>
+            <IonLabel position="stacked">Mật khẩu mới</IonLabel>
             <IonInput type="password" value={next} onIonInput={(e) => setNext(e.detail.value || '')} />
           </IonItem>
           <IonItem>
-            <IonLabel position="stacked">Retype New Password</IonLabel>
+            <IonLabel position="stacked">Nhập lại mật khẩu mới</IonLabel>
             <IonInput type="password" value={confirm} onIonInput={(e) => setConfirm(e.detail.value || '')} />
           </IonItem>
         </IonList>
 
         <div style={{ padding: 16 }}>
           <IonButton expand="block" onClick={onSubmit} disabled={saving}>
-            Submit New Password
+            Xác nhận mật khẩu mới
           </IonButton>
         </div>
       </IonContent>
