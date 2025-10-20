@@ -1,38 +1,464 @@
-/* EditNote.css */
+.edit-note-page {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.edit-note-content {
+    --background: transparent;
+}
+
+/* Toolbar Styles */
+.modern-toolbar {
+    --background: rgba(255, 255, 255, 0.95);
+    --border-width: 0;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modern-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2d3748;
+}
+
+.title-icon {
+    font-size: 1.5rem;
+    color: var(--ion-color-primary);
+}
+
+.save-button {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    font-weight: 600;
+    text-transform: none;
+    margin-left: 8px;
+}
+
+.delete-button {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    font-weight: 600;
+    text-transform: none;
+}
+
+/* Container */
 .edit-note-container {
-  max-width: 800px;
-  margin: 0 auto;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    animation: fadeInUp 0.5s ease-out;
 }
 
-.edit-note-container ion-item {
-  margin-bottom: 16px;
-  --padding-start: 0;
-  --inner-padding-end: 0;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.edit-note-container ion-textarea {
-  margin-top: 8px;
-  border: 1px solid var(--ion-color-medium);
-  border-radius: 8px;
-  padding: 8px;
-  min-height: 200px;
+/* Modern Card */
+.modern-card {
+    border-radius: 24px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    margin: 0;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow: hidden;
+    position: relative;
 }
 
-.edit-note-container ion-input {
-  margin-top: 8px;
-  border: 1px solid var(--ion-color-medium);
-  border-radius: 8px;
-  padding: 8px;
+.modern-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg,
+        #667eea 0%,
+        #764ba2 50%,
+        #f093fb 100%);
+    z-index: 1;
 }
 
+.card-content {
+    padding: 32px 24px;
+}
+
+/* Input Groups */
+.input-group {
+    margin-bottom: 24px;
+}
+
+.modern-item {
+    --background: rgba(255, 255, 255, 0.7);
+    --border-radius: 16px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --inner-padding-end: 0;
+    --min-height: 60px;
+    border: 2px solid rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    margin-bottom: 0;
+}
+
+.modern-item:hover {
+    --background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modern-item.item-has-focus {
+    --background: rgba(255, 255, 255, 0.95);
+    border-color: var(--ion-color-primary);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.modern-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+
+.required {
+    color: #e53e3e;
+    margin-left: 4px;
+}
+
+.modern-input,
+.modern-textarea {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+.modern-textarea {
+    min-height: 200px;
+    line-height: 1.6;
+}
+
+
+
+/* Color Picker Section */
+.color-picker-section {
+    margin: 32px 0;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.section-icon {
+    font-size: 1.5rem;
+    color: var(--ion-color-primary);
+}
+
+.section-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2d3748;
+    letter-spacing: 0.3px;
+}
+
+.color-palette {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.color-swatch {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        inset 0 1px 3px rgba(255, 255, 255, 0.5);
+    margin: 0 auto;
+}
+
+.color-swatch:hover {
+    transform: scale(1.2) translateY(-4px);
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        inset 0 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+.color-swatch.selected {
+    border-color: #667eea;
+    border-width: 4px;
+    box-shadow:
+        0 0 0 4px rgba(102, 126, 234, 0.3),
+        0 8px 20px rgba(0, 0, 0, 0.25);
+    transform: scale(1.15);
+}
+
+.color-swatch.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #2d3748;
+    font-weight: 900;
+    font-size: 20px;
+    text-shadow:
+        0 1px 2px rgba(255, 255, 255, 0.8),
+        0 -1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Options Section */
+.options-section {
+    margin: 24px 0;
+}
+
+.toggle-item {
+    --background: rgba(255, 255, 255, 0.6);
+    --border-radius: 16px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --min-height: 65px;
+    border: 2px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.toggle-item:hover {
+    --background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(102, 126, 234, 0.2);
+    transform: translateX(4px);
+}
+
+.option-icon {
+    font-size: 1.4rem;
+    color: var(--ion-color-primary);
+    margin-right: 12px;
+}
+
+.option-label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+.modern-toggle {
+    --handle-width: 26px;
+    --handle-height: 26px;
+}
+
+/* Button Container */
 .button-container {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.button-container ion-button {
-  margin: 0;
+.primary-button {
+    --border-radius: 16px;
+    --padding-top: 18px;
+    --padding-bottom: 18px;
+    --box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
 }
 
+.primary-button:hover {
+    --box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+    transform: translateY(-3px);
+}
+
+.primary-button:active {
+    transform: translateY(-1px);
+}
+
+.secondary-button {
+    --border-radius: 16px;
+    --padding-top: 18px;
+    --padding-bottom: 18px;
+    --border-width: 2px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    margin: 0;
+}
+
+.secondary-button:hover {
+    --background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Loading & Toast */
+.modern-loading {
+    --backdrop-opacity: 0.7;
+    --spinner-color: var(--ion-color-primary);
+}
+
+.modern-toast {
+    --border-radius: 16px;
+    --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .edit-note-container {
+        padding: 12px;
+    }
+
+    .card-content {
+        padding: 24px 16px;
+    }
+
+    .modern-title {
+        font-size: 1.1rem;
+    }
+
+    .color-palette {
+        grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+        gap: 10px;
+    }
+
+    .color-swatch {
+        width: 45px;
+        height: 45px;
+    }
+
+    .delete-button,
+    .save-button {
+        --padding-start: 12px;
+        --padding-end: 12px;
+    }
+
+    .delete-button .button-text,
+    .save-button .button-text {
+        display: none;
+    }
+
+    .delete-button ion-icon,
+    .save-button ion-icon {
+        margin: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .button-container {
+        flex-direction: row;
+        gap: 16px;
+    }
+
+    .primary-button,
+    .secondary-button {
+        flex: 1;
+    }
+
+    .color-palette {
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .modern-card {
+        margin: 20px 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .edit-note-container {
+        padding: 40px 20px;
+    }
+
+    .card-content {
+        padding: 40px 32px;
+    }
+
+    .modern-card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 24px 70px rgba(0, 0, 0, 0.2),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.modern-item.item-has-focus .modern-label {
+    color: var(--ion-color-primary);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .edit-note-page {
+        --background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+
+    .modern-toolbar {
+        --background: rgba(45, 55, 72, 0.95);
+    }
+
+    .modern-title,
+    .modern-label,
+    .section-title,
+    .option-label {
+        color: #e2e8f0;
+    }
+
+    .modern-item {
+        --background: rgba(45, 55, 72, 0.7);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .modern-item:hover {
+        --background: rgba(45, 55, 72, 0.85);
+    }
+
+    .color-picker-section,
+    .toggle-item {
+        background: rgba(45, 55, 72, 0.6);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .color-swatch.selected::after {
+        color: #e2e8f0;
+        text-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.8),
+            0 -1px 2px rgba(255, 255, 255, 0.2);
+    }
+}

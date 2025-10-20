@@ -42,6 +42,7 @@ export interface Notebook {
 
 export interface NoteFormData {
   title: string;
+  color: string;
   content?: string;
   notebookId?: number;
   parentNoteId?: number;
