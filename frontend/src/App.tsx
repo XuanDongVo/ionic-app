@@ -35,7 +35,6 @@ import ResetPassword from './pages/ResetPassword';
 import NoteList from './pages/NoteList';
 import CreateNote from './pages/CreateNote';
 import EditNote from './pages/EditNote';
-import DevTools from './pages/DevTools';
 import React from 'react';
 
 setupIonicReact();
@@ -70,7 +69,6 @@ const App: React.FC = () => {
           <Route path="/profile/edit" component={ProfileEdit} exact />
           <Route path="/profile/change-password" component={ChangePassword} exact />
           <Route path="/settings" component={Settings} exact />
-          <Route path="/dev-tools" component={DevTools} exact />
 
           {/* Note Pages */}
           <Route path="/notes" component={NoteList} exact />

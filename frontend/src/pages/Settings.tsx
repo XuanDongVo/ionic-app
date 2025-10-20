@@ -105,14 +105,6 @@ const Settings: React.FC = () => {
         <div className="section-label">CÀI ĐẶT ỨNG DỤNG</div>
 
         <IonList inset className="settings-list">
-          <IonItem button detail={true} routerLink="/dev-tools" color="warning">
-            <IonIcon icon={constructOutline} slot="start" />
-            <IonLabel>
-              <h2>🛠️ Developer Tools</h2>
-              <p>Mock token & testing</p>
-            </IonLabel>
-          </IonItem>
-
           <IonItem button detail={true} routerLink="/profile/change-password">
             <IonIcon icon={lockClosedOutline} slot="start" />
             <IonLabel>Đổi mật khẩu</IonLabel>
@@ -147,7 +139,6 @@ const Settings: React.FC = () => {
           </IonItem>
         </IonList>
 
-        <div className="settings-footer-version">Makarya Notes v1.1</div>
       </IonContent>
     </IonPage>
   );
