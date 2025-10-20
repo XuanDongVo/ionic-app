@@ -23,7 +23,7 @@ const ForgotPassword: React.FC = () => {
     try {
       setLoading(true);
       // GỌI API GỬI MÃ XÁC NHẬN
-      const response = await axios.post("http://localhost:8080/api/auth/forgot-password", {
+      const response = await axios.post("http://10.0.2.2:8080/api/auth/forgot-password", {
         email: email,
       });
 

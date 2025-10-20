@@ -54,7 +54,9 @@ export async function searchNotes(keyWord: string): Promise<Note[]> {
 // LẤY DANH SÁCH NOTE ĐÃ HOÀN THÀNH
 export async function getCompletedNotes(): Promise<Note[]> {
   try {
-    const wrapper = await ApiService.get<ApiResponse<Note[]>>(`/api/notes/completed`);
+    const wrapper = await ApiService.get<ApiResponse<Note[]>>(
+      `/api/notes/completed`
+    );
     return wrapper.data;
   } catch (err) {
     console.error("Error fetching completed notes:", err);
@@ -63,7 +65,10 @@ export async function getCompletedNotes(): Promise<Note[]> {
 }
 
 // Cập nhật trạng thái hoàn thành của note
-export async function updateNoteStatus(noteId: number, isCompleted: boolean): Promise<Note> {
+export async function updateNoteStatus(
+  noteId: number,
+  isCompleted: boolean
+): Promise<Note> {
   try {
     const endpoint = `/api/notes/${noteId}/status?isCompleted=${isCompleted}`;
     // API giờ trả về cấu trúc { success, message, data }
@@ -76,6 +81,22 @@ export async function updateNoteStatus(noteId: number, isCompleted: boolean): Pr
   }
 }
 
+// Tạo notebook mới
+export async function createNotebook(data: {
+  name: string;
+}): Promise<Notebook> {
+  try {
+    const response = await ApiService.post<ApiResponse<Notebook>>(
+      "/api/notebooks",
+      data
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Error creating notebook:", err);
+    throw err;
+  }
+}
+
 export default {
   getNotebooks,
   getNotesByNotebookId,
@@ -83,4 +104,5 @@ export default {
   updateNoteStatus,
   searchNotes,
   getCompletedNotes,
+  createNotebook,
 };

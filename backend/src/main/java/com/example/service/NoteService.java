@@ -39,7 +39,7 @@ public class NoteService {
 
     @Transactional(readOnly = true)
     public List<NoteResponse> getAllNotesByUser(Long userId) {
-        List<Note> notes = noteRepository.findByUserId(userId);
+        List<Note> notes = noteRepository.findAllByUserId(userId);
         return noteMapper.toResponseList(notes);
     }
 

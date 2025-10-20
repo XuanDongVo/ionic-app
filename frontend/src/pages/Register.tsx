@@ -22,14 +22,14 @@ const Register: React.FC = () => {
       return;
     }
 
-     if(password.length<6){
-        setError('Độ dài mật khẩu phải lớn hơn 6');
-        return;
-      }
+    if (password.length < 6) {
+      setError('Độ dài mật khẩu phải lớn hơn 6');
+      return;
+    }
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:8080/api/auth/register', {
+      const response = await axios.post('http://10.0.2.2:8080/api/auth/register', {
         username,
         email,
         password,
