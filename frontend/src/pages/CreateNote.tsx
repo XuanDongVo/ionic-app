@@ -52,9 +52,16 @@ const CreateNote: React.FC = () => {
       setToastColor('success');
       setShowToast(true);
 
-      // Redirect to notes list after short delay
+      // Redirect to notes list after short delay with reload flag
       setTimeout(() => {
-        history.push('/notes');
+        // Đặt localStorage flag để bảo đảm cập nhật danh sách
+        localStorage.setItem('note-updated', Date.now().toString());
+
+        // Sử dụng cả route state và localStorage để đảm bảo hai cách hoạt động
+        history.push({
+          pathname: '/home',
+          state: { reload: true, timestamp: Date.now() }
+        });
       }, 1000);
     } catch (error) {
       console.error('❌ Create note error:', error);

@@ -13,7 +13,7 @@ const VerifyEmail: React.FC = () => {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:8080/api/auth/verify-otp", {
+      const res = await fetch("http://10.0.2.2:8080/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: code }),
@@ -35,7 +35,7 @@ const VerifyEmail: React.FC = () => {
 
   const handleResend = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/auth/resend-otp", {
+      const res = await fetch("http://10.0.2.2:8080/api/auth/resend-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }), // truyền lại email đang nhập

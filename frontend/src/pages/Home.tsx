@@ -1,5 +1,6 @@
-import React, { useState, 
-  useEffect, 
+import React, {
+  useState,
+  useEffect,
 } from 'react';
 import {
   IonContent,
@@ -9,28 +10,40 @@ import {
   IonToolbar,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
-  IonLabel,
   IonItem,
   IonToast,
-  // useIonViewWillEnter,
+  IonIcon,
+  IonModal,
+  IonButton,
+  IonInput,
+  useIonViewWillEnter,
 } from '@ionic/react';
+import { useHistory, useLocation } from 'react-router-dom';
+import { addCircle, closeOutline } from 'ionicons/icons';
 import NoteCard from '../components/NoteCard';
 import './Home.css';
 import { Note, Notebook } from '../types';
 import noteService from '../state/noteService/noteService';
 
 const Home: React.FC = () => {
+  const history = useHistory();
+  const location = useLocation();
   const [notes, setNotes] = useState<Note[]>([]);
   const [notebooks, setNotebooks] = useState<Notebook[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastColor, setToastColor] = useState<'success' | 'danger'>('success');
+  const [selectedNotebookId, setSelectedNotebookId] = useState<number>(0);
+
+  // State cho modal tạo notebook
+  const [showCreateNotebookModal, setShowCreateNotebookModal] = useState(false);
+  const [newNotebookName, setNewNotebookName] = useState('');
 
   const fetchNotebooks = async () => {
     try {
       const fetchedNotebooks = await noteService.getNotebooks();
       if (fetchedNotebooks.length > 0) {
-        const allNotebooksOption = { id: 0, name: 'All Notebooks' };
+        const allNotebooksOption = { id: 0, name: 'Tất cả' };
         setNotebooks([allNotebooksOption, ...fetchedNotebooks]);
       }
       fetchAllNotes();
@@ -51,6 +64,7 @@ const Home: React.FC = () => {
 
   const fetchNotesByNotebookId = async (notebookId: number) => {
     try {
+      setSelectedNotebookId(notebookId);
       if (notebookId === 0) {
         fetchAllNotes();
       } else {
@@ -69,7 +83,7 @@ const Home: React.FC = () => {
     // Đảo ngược trạng thái hoàn thành
     const newStatus = !noteToUpdate.isCompleted;
     if (!newStatus) {
-    localStorage.setItem('note-updated', Date.now().toString());
+      localStorage.setItem('note-updated', Date.now().toString());
     }
 
     try {
@@ -106,17 +120,63 @@ const Home: React.FC = () => {
     window.addEventListener('storage', handleStorage);
 
     return () => window.removeEventListener('storage', handleStorage);
-    }, []);
+  }, []);
 
+
+  // Hàm tạo notebook mới
+  const handleCreateNotebook = async () => {
+    if (!newNotebookName.trim()) {
+      setToastMessage('Vui lòng nhập tên cho notebook!');
+      setToastColor('danger');
+      setShowToast(true);
+      return;
+    }
+
+    try {
+      const newNotebook = await noteService.createNotebook({ name: newNotebookName.trim() });
+
+      // Cập nhật danh sách notebooks
+      setNotebooks(prevNotebooks => {
+        if (prevNotebooks.length > 0 && prevNotebooks[0].id === 0) {
+          return [...prevNotebooks, newNotebook];
+        }
+        return [{ id: 0, name: 'All Notebooks' }, newNotebook];
+      });
+
+      setToastMessage('Notebook đã được tạo thành công!');
+      setToastColor('success');
+      setShowToast(true);
+
+      setShowCreateNotebookModal(false);
+      setNewNotebookName('');
+    } catch (error) {
+      console.error("Error creating notebook:", error);
+      setToastMessage('Không thể tạo notebook. Vui lòng thử lại sau!');
+      setToastColor('danger');
+      setShowToast(true);
+    }
+  };
 
   useEffect(() => {
     fetchNotebooks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useIonViewWillEnter(() => {
-  //   console.log('Home view will enter, fetching notes...');
-  //   fetchNotebooks(); // Hàm này sẽ gọi fetchAllNotes
-  // });
+  useEffect(() => {
+    console.log('Location state changed:', location.state);
+    if (location.state && location.state.reload) {
+      console.log('Reloading notes from state trigger');
+      fetchAllNotes();
+      history.replace({ ...location, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
+
+  // Sử dụng useIonViewWillEnter để cập nhật danh sách ghi chú khi quay lại trang
+  useIonViewWillEnter(() => {
+    console.log('IonViewWillEnter - Fetching notes');
+    fetchAllNotes();
+  });
 
   return (
     <IonPage>
@@ -140,29 +200,35 @@ const Home: React.FC = () => {
           style={{
             display: "flex",
             overflowX: "auto",
-            gap: "12px",
-            padding: "10px",
+            gap: "6px",
+            padding: "12px 0px",
             scrollbarWidth: "none",
-
           }}
           className="notebook-scroll"
         >
           {notebooks.map((nb) => (
-            <IonItem
+            <button
               key={nb.id}
-              button
+              className={`add-notebook-button ${selectedNotebookId === nb.id ? 'active' : ''}`}
               onClick={() => fetchNotesByNotebookId(nb.id)}
-              style={{
-                flex: "0 0 auto",
-                minWidth: "120px",
-                borderRadius: "10px",
-                color: "black",
-                justifyContent: "center",
-              }}
+              aria-label={`Mở sổ tay ${nb.name}`}
             >
-              <IonLabel style={{ textAlign: "center" }}>{nb.name}</IonLabel>
-            </IonItem>
+              <span className="add-notebook-text">{nb.name}</span>
+            </button>
           ))}
+
+          {/* Nút tạo notebook mới */}
+          <div className="add-notebook-button-container">
+            <button
+              className="add-notebook-button"
+              onClick={() => setShowCreateNotebookModal(true)}
+              aria-label="Tạo notebook mới"
+              style={{ color: "black" }}
+            >
+              <IonIcon icon={addCircle} />
+              <span className="add-notebook-text">Sổ tay</span>
+            </button>
+          </div>
         </div>
 
         {notes.length === 0 ? (
@@ -306,6 +372,62 @@ const Home: React.FC = () => {
             </div>
           </>
         )}
+
+        {/* Modal tạo notebook mới */}
+        <IonModal
+          isOpen={showCreateNotebookModal}
+          onDidDismiss={() => {
+            setShowCreateNotebookModal(false);
+            setNewNotebookName('');
+          }}
+          className="create-notebook-modal"
+          style={{ '--height': '240px' }}
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Tạo Sổ Tay Mới</h3>
+              <IonButton
+                fill="clear"
+                onClick={() => setShowCreateNotebookModal(false)}
+                className="close-button"
+              >
+                <IonIcon slot="icon-only" icon={closeOutline} />
+              </IonButton>
+            </div>
+
+            <div className="form-container">
+              <IonItem className="notebook-input-item" lines="none">
+                <IonInput
+                  value={newNotebookName}
+                  onIonChange={(e: CustomEvent) => setNewNotebookName(e.detail.value || '')}
+                  placeholder="Nhập tên cho sổ tay mới..."
+                  autofocus={true}
+                  enterkeyhint="done"
+                  onKeyPress={(e: React.KeyboardEvent) => {
+                    if (e.key === 'Enter' && newNotebookName.trim()) {
+                      handleCreateNotebook();
+                    }
+                  }}
+                  className="notebook-input"
+                />
+              </IonItem>
+
+              <div className="button-container">
+                <IonButton
+                  expand="block"
+                  onClick={handleCreateNotebook}
+                  disabled={!newNotebookName.trim()}
+                  className="create-notebook-button"
+                  size="default"
+                  color="primary"
+                >
+                  <IonIcon slot="start" icon={addCircle} />
+                  Tạo Sổ Tay
+                </IonButton>
+              </div>
+            </div>
+          </div>
+        </IonModal>
       </IonContent>
     </IonPage>
   );

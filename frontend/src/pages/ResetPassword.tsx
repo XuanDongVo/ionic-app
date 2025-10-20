@@ -33,7 +33,7 @@ const ResetPassword: React.FC = () => {
       setLoading(true);
 
       // ✅ Gửi yêu cầu reset password (không cần OTP nữa)
-      const response = await axios.post("http://localhost:8080/api/auth/reset-password", {
+      const response = await axios.post("http://10.0.2.2:8080/api/auth/reset-password", {
         email,
         newPassword: password,
         newPasswordConfirm: confirmPassword,

@@ -17,14 +17,14 @@ const Login: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:8080/api/auth/login", {
+            const response = await axios.post("http://10.0.2.2:8080/api/auth/login", {
                 email,
                 password,
             });
 
             if (response.data.success) {
                 localStorage.setItem("token", response.data.data.token);
-                history.push("/home"); 
+                history.push("/home");
             } else {
                 setError(response.data.message);
             }

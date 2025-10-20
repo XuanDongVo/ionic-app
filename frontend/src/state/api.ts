@@ -6,11 +6,12 @@ import { isPlatform } from "@ionic/react";
 // Tự động detect platform và dùng IP phù hợp
 // Khi chạy trên thiết bị Android/iOS thật, cần dùng IP của máy tính thay vì localhost
 // TODO: Thay đổi IP này thành IP máy tính của bạn khi test trên thiết bị thật
-const API_IP = "192.168.137.1"; // THAY ĐỔI IP NÀY!
+const API_IP = "10.0.2.2"; // THAY ĐỔI IP NÀY!
 
-export const baseUrl = isPlatform("capacitor") || isPlatform("cordova") 
-  ? `http://${API_IP}:8080`  // Chạy trên mobile device
-  : "http://localhost:8080";  // Chạy trên browser
+export const baseUrl =
+  isPlatform("capacitor") || isPlatform("cordova")
+    ? `http://${API_IP}:8080` // Chạy trên mobile device
+    : `http://${API_IP}:8080`; // Chạy trên browser
 
 console.log("API baseUrl:", baseUrl);
 
@@ -107,14 +108,22 @@ export default api;
 
 // Profile-specific helpers
 export async function fetchProfile(email: string) {
-  return ApiService.get<{ id: string; fullName: string; email: string; imagePath?: string }>(
-    "/api/profile",
-    { email }
-  );
+  return ApiService.get<{
+    id: string;
+    fullName: string;
+    email: string;
+    imagePath?: string;
+  }>("/api/profile", { email });
 }
 
-export async function updateProfile(email: string, data: { fullName?: string; email?: string }) {
-  return ApiService.put<unknown>(`/api/profile?email=${encodeURIComponent(email)}`, data);
+export async function updateProfile(
+  email: string,
+  data: { fullName?: string; email?: string }
+) {
+  return ApiService.put<unknown>(
+    `/api/profile?email=${encodeURIComponent(email)}`,
+    data
+  );
 }
 
 export async function uploadProfileImage(email: string, file: File) {
@@ -147,20 +156,28 @@ export interface ProfileApiResponse {
 }
 
 export async function getCurrentUserProfile(): Promise<UserProfileData> {
-  const response = await ApiService.get<ProfileApiResponse>('/api/profile/me');
+  const response = await ApiService.get<ProfileApiResponse>("/api/profile/me");
   return response.data;
 }
 
-export async function updateCurrentUserProfile(data: { username?: string; email?: string }): Promise<UserProfileData> {
-  const response = await ApiService.put<ProfileApiResponse>('/api/profile/me', data);
+export async function updateCurrentUserProfile(data: {
+  username?: string;
+  email?: string;
+}): Promise<UserProfileData> {
+  const response = await ApiService.put<ProfileApiResponse>(
+    "/api/profile/me",
+    data
+  );
   return response.data;
 }
 
-export async function uploadCurrentUserImage(file: File): Promise<{ profileImage: string }> {
+export async function uploadCurrentUserImage(
+  file: File
+): Promise<{ profileImage: string }> {
   const form = new FormData();
   form.append("file", file);
   const res = await api.post<ProfileApiResponse>(
-    '/api/profile/me/image',
+    "/api/profile/me/image",
     form,
     {
       headers: { "Content-Type": "multipart/form-data" },
@@ -169,7 +186,15 @@ export async function uploadCurrentUserImage(file: File): Promise<{ profileImage
   return res.data.data as { profileImage: string };
 }
 
-export async function changePassword(data: { currentPassword: string; newPassword: string; confirmPassword: string }) {
-  const response = await ApiService.put<{ success: boolean; message: string; data: null }>('/api/profile/me/change-password', data);
+export async function changePassword(data: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}) {
+  const response = await ApiService.put<{
+    success: boolean;
+    message: string;
+    data: null;
+  }>("/api/profile/me/change-password", data);
   return response;
 }

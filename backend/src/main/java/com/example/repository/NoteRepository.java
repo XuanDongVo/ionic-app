@@ -14,6 +14,10 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     List<Note> findByUserId(Long userId);
 
+    @Query("SELECT n FROM Note n WHERE n.user.id = :userId AND n.isCompleted = false AND n.deletedAt IS NULL")
+    List<Note> findAllByUserId(Long userId);
+
+
     Optional<Note> findByIdAndUserId(Long id, Long userId);
 
     List<Note> findByUserIdAndIsPinnedTrue(Long userId);
