@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = "http://10.0.2.2:8080/api";
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
